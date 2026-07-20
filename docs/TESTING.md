@@ -63,7 +63,7 @@ Testar os arquivos em `exemplos/`:
 4. Use **Limpar dados**.
 5. Recarregue novamente e confirme que a importação não foi restaurada.
 
-## Verificações técnicas realizadas na v1.5.0
+## Verificações técnicas realizadas na v1.6.0
 
 - validação sintática de todos os arquivos JavaScript com `node --check`;
 - conferência de referências locais no `index.html`;

@@ -4,9 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#174ea6" />
     <meta name="application-name" content="Ahgora — Batidas Ímpares" />
-    <meta name="version" content="1.5.0" />
-    <title>Visão consolidada das batidas ímpares</title>
+    <meta name="version" content="1.6.0" />
+    <title>Batidas Ímpares — Painel de conferência</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+    <link rel="shortcut icon" href="assets/icons/favicon.svg" />
     <meta
       name="description"
       content="Painel wide, local e autônomo para importar JSON, CSV ou XLSX, filtrar batidas ímpares e exportar relatórios em PDF, PNG e XLSX."
@@ -19,6 +22,7 @@
     <link rel="stylesheet" href="assets/css/04-welcome-and-analysis.css" />
     <link rel="stylesheet" href="assets/css/05-responsive-application.css" />
     <link rel="stylesheet" href="assets/css/06-calendar.css" />
+    <link rel="stylesheet" href="assets/css/07-experience.css" />
   </head>
   <body class="welcome-mode">
     <section
@@ -195,7 +199,7 @@
             <path d="m2 9 10-5 10 5-10 5z" />
             <path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6" /></svg
           ><strong>Hagliberto Alves de Oliveira</strong
-          ><span class="sep">|</span><small>v1.5.0</small></a
+          ><span class="sep">|</span><small>v1.6.0</small></a
         >
       </footer>
     </section>
@@ -203,18 +207,17 @@
     <div class="app-shell" id="appShell" hidden>
       <header class="appbar">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true">
+          <div class="brand-mark fingerprint-brand" aria-hidden="true">
             <svg viewBox="0 0 24 24">
-              <path d="M4 19V5m0 14h16M7 15l3-3 3 2 5-6" />
-              <path d="M18 8h-3m3 0v3" />
+              <path d="M5 11a7 7 0 0 1 14 0" />
+              <path d="M7.5 13a4.5 4.5 0 0 1 9 0c0 3.5-.8 6.1-2.3 8" />
+              <path d="M10 14.5c0-1.5.8-2.5 2-2.5s2 1 2 2.5c0 2.8-.5 4.8-1.3 6.5" />
+              <path d="M5.5 15c.2 2.8 1 4.8 2.6 6.3" />
             </svg>
           </div>
-          <div>
-            <h1>Visão consolidada das batidas ímpares</h1>
-            <p>
-              Importação, filtros analíticos e relatórios detalhados em uma
-              única página wide
-            </p>
+          <div class="brand-copy">
+            <div class="brand-title-row"><h1>Visão consolidada das batidas ímpares</h1><span class="local-badge"><i></i>Local e privado</span></div>
+            <p>Importação, filtros analíticos e relatórios detalhados em uma única página wide</p>
           </div>
         </div>
         <div class="top-actions">
@@ -227,6 +230,15 @@
               <path d="M4 5h16v14H4z" />
               <path d="M8 9h8M8 13h5" />
             </svg>
+          </button>
+          <button class="btn appbar-secondary" id="quickSearchBtn" title="Pesquisar — atalho /">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><span>Pesquisar</span><kbd>/</kbd>
+          </button>
+          <button class="btn appbar-secondary" id="toggleSectionsBtn" title="Expandir ou recolher todas as seções">
+            <svg viewBox="0 0 24 24"><path d="m7 8 5-5 5 5M7 16l5 5 5-5"/><path d="M12 3v18"/></svg><span>Seções</span>
+          </button>
+          <button class="btn icon-only" id="densityBtn" title="Alternar densidade da visualização" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
           <button
             class="btn primary"
@@ -267,6 +279,17 @@
       </header>
 
       <main class="page">
+        <section class="context-strip" id="contextStrip" aria-label="Resumo do recorte atual">
+          <div class="context-item file"><span class="context-icon"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><path d="M15 2v4h4"/></svg></span><div><small>Arquivo atual</small><strong id="contextFileName">Amostra fictícia incorporada</strong></div></div>
+          <div class="context-item"><span class="context-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span><div><small>Período exibido</small><strong id="contextPeriod">Período não informado</strong></div></div>
+          <div class="context-item"><span class="context-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><div><small>Registros filtrados</small><strong id="contextRecords">0</strong></div></div>
+          <div class="context-item"><span class="context-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M15 15c3 0 4.8 1.6 5.5 5"/></svg></span><div><small>Empregados no recorte</small><strong id="contextEmployees">0</strong></div></div>
+        </section>
+        <section class="active-filter-shell" id="activeFilterShell" hidden aria-live="polite">
+          <div class="active-filter-title"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg><span>Filtros ativos</span><strong id="activeFilterCount">0</strong></div>
+          <div class="active-filter-chips" id="activeFilterChips"></div>
+          <button class="clear-active-filters" id="clearActiveFiltersBtn" type="button">Limpar todos</button>
+        </section>
         <span id="fileNamePill" hidden>Amostra fictícia incorporada</span
         ><span id="loadedAtPill" hidden>0 registros</span>
         <section
@@ -335,107 +358,23 @@
             ></span>
           </button>
           <div class="accordion-body" id="downloadGuideBody" hidden>
-            <div class="route totvs-route" aria-label="Caminho no TOTVS Ahgora">
-              <span class="route-pill route-app route-pontoweb">
-                <span class="route-mini-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M9 20h6M12 15v5"/></svg>
-                </span>
-                <span>PontoWeb</span>
-              </span>
+            <div class="route totvs-route">
+              <span class="route-pill route-app"><span class="route-mini-icon route-pontoweb"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M9 20h6M12 16v4"/></svg></span><span>PontoWeb</span></span>
               <span class="route-arrow">›</span>
-              <span class="route-pill route-app route-analytics">
-                <span class="route-mini-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17l4-4 3 2 6-7"/><path d="M15 8h3v3"/></svg>
-                </span>
-                <span>Analytics</span>
-              </span>
+              <span class="route-pill route-app"><span class="route-mini-icon route-analytics"><svg viewBox="0 0 24 24"><path d="M5 18h14M6 15l4-4 3 2 5-7"/><path d="M16 6h2v2"/></svg></span><span>Analytics</span></span>
               <span class="route-arrow">›</span>
-              <span class="route-pill route-app route-paineis">
-                <span class="route-mini-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>
-                </span>
-                <span>Painéis</span>
-              </span>
+              <span class="route-pill route-app"><span class="route-mini-icon route-paineis"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></span><span>Painéis</span></span>
               <span class="route-arrow">›</span>
-              <span class="route-pill route-app route-batidas">
-                <span class="route-mini-icon fingerprint-mini">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17c0-6 2-9 5-9s5 3 5 8"/><path d="M5 15c0-7 3-11 7-11s7 4 7 11"/><path d="M9 20c-1-4 0-8 3-8 2 0 3 2 3 5 0 2 1 3 2 4"/><path d="M4 11c1-6 4-9 8-9 5 0 9 4 9 10"/></svg>
-                </span>
-                <span>Batidas Ímpares</span>
-              </span>
+              <span class="route-pill route-app route-batidas"><span class="route-mini-icon fingerprint-mini"><svg viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 14 0"/><path d="M7.5 13a4.5 4.5 0 0 1 9 0c0 3.5-.8 6.1-2.3 8"/><path d="M10 14.5c0-1.5.8-2.5 2-2.5s2 1 2 2.5c0 2.8-.5 4.8-1.3 6.5"/></svg></span><span>Batidas Ímpares</span></span>
             </div>
             <div class="steps totvs-steps">
-              <article class="step totvs-step">
-                <span class="step-number">1</span>
-                <div class="totvs-preview preview-brand" aria-hidden="true">
-                  <div class="totvs-brand-lockup">
-                    <svg viewBox="0 0 28 22"><path d="M3 6 10 2l7 4-7 4z"/><path d="m10 12 7-4 8 4-8 5z"/><path d="m3 8 7 4v7l-7-4z"/></svg>
-                    <span><b>TOTVS</b> Gestão</span>
-                  </div>
-                </div>
-                <strong>Entre no TOTVS Gestão</strong>
-                <p>Acesse o ambiente principal do TOTVS Ahgora para iniciar a navegação.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">2</span>
-                <div class="totvs-preview preview-pontoweb" aria-hidden="true">
-                  <svg viewBox="0 0 32 28"><rect x="5" y="4" width="22" height="15" rx="1.5"/><path d="M11 24h10M16 19v5"/></svg>
-                  <span>PontoWEB</span>
-                </div>
-                <strong>Acesse o PontoWeb</strong>
-                <p>Na página inicial, clique em <em>PontoWeb</em> para abrir os módulos disponíveis.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">3</span>
-                <div class="totvs-preview preview-analytics" aria-hidden="true">
-                  <svg viewBox="0 0 32 28"><path d="M5 21l7-7 5 4 9-11"/><path d="M21 7h5v5"/></svg>
-                  <span>Analytics</span>
-                </div>
-                <strong>Abra o Analytics</strong>
-                <p>Dentro do PontoWeb, selecione o recurso <em>Analytics</em>.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">4</span>
-                <div class="totvs-preview preview-paineis" aria-hidden="true">
-                  <svg viewBox="0 0 32 28"><rect x="4" y="4" width="8" height="8"/><rect x="20" y="4" width="8" height="8"/><rect x="4" y="16" width="8" height="8"/><rect x="20" y="16" width="8" height="8"/></svg>
-                  <span>Painéis</span>
-                </div>
-                <strong>Entre em Painéis</strong>
-                <p>No Analytics, clique em <em>Painéis</em> para abrir a lista de dashboards.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">5</span>
-                <div class="totvs-preview preview-batidas" aria-hidden="true">
-                  <svg viewBox="0 0 48 48"><path d="M13 34c0-12 4-20 11-20s11 8 11 18"/><path d="M9 29C9 14 15 6 24 6s15 8 15 22"/><path d="M18 41c-3-9-1-17 6-17 5 0 7 5 7 11 0 4 2 6 4 8"/><path d="M6 21C9 10 15 3 24 3c11 0 19 10 19 22"/></svg>
-                  <strong>Batidas ímpares</strong>
-                  <small>Monitore as pendências e os responsáveis.</small>
-                </div>
-                <strong>Abra “Batidas ímpares”</strong>
-                <p>Selecione o card <em>Batidas ímpares</em> para visualizar a lista de ocorrências.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">6</span>
-                <div class="totvs-preview preview-download" aria-hidden="true">
-                  <span class="download-more">•••</span>
-                  <div class="download-action">
-                    <svg viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1 .6-7.9A5.5 5.5 0 0 1 18.4 8 3.5 3.5 0 0 1 18 15h-2"/><path d="M12 10v8m0 0-3-3m3 3 3-3"/></svg>
-                    <span>Fazer download de resultados</span>
-                  </div>
-                </div>
-                <strong>Baixe os resultados</strong>
-                <p>Na lista, abra os três pontos e escolha <em>Fazer download de resultados</em>.</p>
-              </article>
-              <article class="step totvs-step">
-                <span class="step-number">7</span>
-                <div class="totvs-preview preview-formats" aria-hidden="true">
-                  <span class="formats-title">Baixar dados</span>
-                  <div class="formats-tabs"><span>.csv</span><span>.xlsx</span><span class="active">.json</span></div>
-                  <div class="formats-check"><i>✓</i><span>Manter os dados formatados</span></div>
-                  <span class="formats-button">Baixar</span>
-                </div>
-                <strong>Escolha o formato</strong>
-                <p>Selecione JSON, CSV ou XLSX, mantenha os dados formatados e clique em <em>Baixar</em>.</p>
-              </article>
+              <article class="step totvs-step"><span class="step-number">1</span><div class="totvs-preview preview-brand"><div class="totvs-brand-lockup"><svg viewBox="0 0 32 24"><path d="M3 7 10 3l7 4-7 4zM15 13l7-4 7 4-7 4zM3 17l7-4 7 4-7 4z"/></svg><span><b>TOTVS</b> Gestão</span></div></div><strong>Entre no TOTVS Gestão</strong><p>Acesse o ambiente principal do Ahgora para iniciar a navegação.</p></article>
+              <article class="step totvs-step"><span class="step-number">2</span><div class="totvs-preview preview-pontoweb"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M9 20h6M12 16v4"/></svg><span>PontoWEB</span></div><strong>Acesse o PontoWeb</strong><p>Na página inicial, clique em <em>PontoWeb</em> para abrir os módulos.</p></article>
+              <article class="step totvs-step"><span class="step-number">3</span><div class="totvs-preview preview-analytics"><svg viewBox="0 0 24 24"><path d="M5 18h14M6 15l4-4 3 2 5-7"/><path d="M16 6h2v2"/></svg><span>Analytics</span></div><strong>Abra o Analytics</strong><p>Dentro do PontoWeb, selecione o recurso <em>Analytics</em>.</p></article>
+              <article class="step totvs-step"><span class="step-number">4</span><div class="totvs-preview preview-paineis"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg><span>Painéis</span></div><strong>Entre em Painéis</strong><p>No Analytics, clique em <em>Painéis</em> para abrir a lista de dashboards.</p></article>
+              <article class="step totvs-step"><span class="step-number">5</span><div class="totvs-preview preview-batidas"><svg viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 14 0"/><path d="M7.5 13a4.5 4.5 0 0 1 9 0c0 3.5-.8 6.1-2.3 8"/><path d="M10 14.5c0-1.5.8-2.5 2-2.5s2 1 2 2.5c0 2.8-.5 4.8-1.3 6.5"/><path d="M5.5 15c.2 2.8 1 4.8 2.6 6.3"/></svg><strong>Batidas ímpares</strong><small>Monitore as batidas ímpares e os responsáveis pelas pendências.</small></div><strong>Abra “Batidas Ímpares”</strong><p>Selecione o card para visualizar a lista de ocorrências.</p></article>
+              <article class="step totvs-step"><span class="step-number">6</span><div class="totvs-preview preview-download"><span class="download-more">•••</span><div class="download-action"><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1 .6-7.95A5.5 5.5 0 0 1 18.4 9 3.5 3.5 0 0 1 18 16h-2"/><path d="M12 10v9m0 0-3-3m3 3 3-3"/></svg><span>Fazer download de resultados</span></div></div><strong>Baixe os resultados</strong><p>Abra os três pontos da tabela e escolha <em>Fazer download de resultados</em>.</p></article>
+              <article class="step totvs-step"><span class="step-number">7</span><div class="totvs-preview preview-formats"><span class="formats-title">Baixar dados</span><div class="formats-tabs"><span>.csv</span><span>.xlsx</span><span class="active">.json</span></div><div class="formats-check"><i>✓</i><span>Mantenha os dados formatados</span></div><span class="formats-button">Baixar</span></div><strong>Escolha o formato</strong><p>Selecione JSON, CSV ou XLSX, mantenha os dados formatados e clique em <em>Baixar</em>.</p></article>
             </div>
             <div class="guide-note">
               <span
@@ -671,9 +610,9 @@
             </button>
             <div class="results-head-actions">
               <div class="segmented" aria-label="Modo de visualização">
-                <button class="active" data-view="table">Tabela</button
-                ><button data-view="cards">Cards</button
-                ><button data-view="calendar">Calendário</button>
+                <button class="active" data-view="table" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16M10 10v9"/></svg><span>Tabela</span></button
+                ><button data-view="cards" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="7" rx="1"/><rect x="13" y="4" width="8" height="7" rx="1"/><rect x="3" y="13" width="8" height="7" rx="1"/><rect x="13" y="13" width="8" height="7" rx="1"/></svg><span>Cards</span></button
+                ><button data-view="calendar" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/></svg><span>Calendário</span></button>
               </div>
             </div>
           </div>
@@ -725,6 +664,7 @@
                     Carregue um arquivo compatível ou ajuste os filtros para
                     visualizar as batidas ímpares.
                   </p>
+                  <div class="empty-actions"><button class="btn primary" id="emptyImportBtn" type="button">Importar arquivo</button><button class="btn soft" id="emptyClearFiltersBtn" type="button">Limpar filtros</button></div>
                 </div>
               </div>
               <div class="pagination" id="paginationWrapper">
@@ -874,6 +814,7 @@
         </div>
       </div>
       <div class="toast-wrap" id="toastWrap"></div>
+      <button class="scroll-top-btn" id="scrollTopBtn" type="button" title="Voltar ao topo" aria-label="Voltar ao topo"><svg viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg></button>
     </div>
 
 
@@ -886,6 +827,7 @@
     <script src="assets/js/infrastructure/storage/local-storage.js"></script>
     <script src="assets/js/application/dashboard-service.js"></script>
     <script src="assets/js/presentation/renderers.js"></script>
+    <script src="assets/js/presentation/experience.js"></script>
     <script src="assets/js/infrastructure/export/export-core-xlsx.js"></script>
     <script src="assets/js/infrastructure/export/pdf-exporter.js"></script>
     <script src="assets/js/infrastructure/export/png-exporter.js"></script>

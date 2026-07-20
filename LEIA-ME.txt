@@ -1,4 +1,4 @@
-PAINEL DE BATIDAS ÍMPARES — v1.3.0
+PAINEL DE BATIDAS ÍMPARES — v1.6.0
 
 A documentação foi migrada para Markdown.
 
