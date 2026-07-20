@@ -1,0 +1,108 @@
+/*
+ * 03-responsive-dashboard.css
+ * Responsividade da estrutura principal.
+ * Projeto: Ahgora — Batidas Ímpares v1.5.0
+ */
+
+@media (max-width: 1550px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .filter-body {
+    grid-template-columns: 1.6fr repeat(3, 1fr);
+  }
+  .workspace {
+    grid-template-columns: 285px minmax(0, 1fr);
+  }
+  .cards-view {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 1050px) {
+  .appbar {
+    align-items: flex-start;
+  }
+  .top-actions .btn span {
+    display: none;
+  }
+  .page {
+    padding: 10px;
+  }
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .side-stack {
+    position: static;
+    grid-template-columns: 1fr 1fr;
+  }
+  .filter-body {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .filter-body .field:first-child {
+    grid-column: 1/-1;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .table-wrap,
+  .cards-view {
+    max-height: none;
+  }
+  .brand p {
+    max-width: 50vw;
+  }
+  .choice-grid {
+    grid-template-columns: 1fr;
+  }
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 650px) {
+  .brand p {
+    display: none;
+  }
+  .guide-head {
+    align-items: flex-start;
+  }
+  .guide-note {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filter-body {
+    grid-template-columns: 1fr;
+  }
+  .filter-body .field:first-child {
+    grid-column: auto;
+  }
+  .side-stack {
+    grid-template-columns: 1fr;
+  }
+  .cards-view {
+    grid-template-columns: 1fr;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .detail-item.full {
+    grid-column: auto;
+  }
+  .choice-grid.two {
+    grid-template-columns: 1fr;
+  }
+  .top-actions {
+    gap: 5px;
+  }
+  .btn {
+    padding: 0 10px;
+  }
+}
