@@ -1,0 +1,111 @@
+/*
+ * 05-responsive-application.css
+ * Responsividade da tela inicial e do painel analítico.
+ * Projeto: Ahgora — Batidas Ímpares v1.5.0
+ */
+
+@media (max-width: 1450px) {
+  .analysis-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analysis-column {
+    height: 420px;
+  }
+}
+@media (max-width: 920px) {
+  body.welcome-mode {
+    overflow: auto;
+  }
+  .welcome-paper {
+    padding: 27px 22px 24px 58px;
+  }
+  .welcome-heading {
+    display: block;
+  }
+  .welcome-heading p {
+    margin-top: 10px;
+  }
+  .welcome-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .welcome-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+  .analysis-column {
+    height: auto;
+    max-height: 520px;
+  }
+  .results-head-actions {
+    padding: 0 10px 10px;
+  }
+  .accordion-head-row.results {
+    flex-wrap: wrap;
+  }
+  .results-trigger {
+    width: 100%;
+  }
+  .table-wrap {
+    max-height: none;
+  }
+}
+@media (max-width: 620px) {
+  .welcome-screen {
+    padding: 10px 10px 84px;
+  }
+  .welcome-paper {
+    width: 100%;
+    padding: 22px 14px 22px 44px;
+  }
+  .welcome-paper::before {
+    left: 11px;
+  }
+  .welcome-heading h1 {
+    font-size: 31px;
+  }
+  .welcome-steps {
+    grid-template-columns: 1fr;
+  }
+  .welcome-actions {
+    flex-direction: column;
+  }
+  .welcome-actions .btn,
+  .welcome-actions a {
+    width: 100%;
+  }
+  .signature-pill {
+    font-size: 11px;
+    padding: 0 12px;
+  }
+  .signature-pill strong {
+    max-width: 210px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .accordion-copy span {
+    display: none;
+  }
+  .analysis-column .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 1450px) {
+  .analysis-column.filters-column {
+    z-index: 22;
+  }
+}
+@media (max-width: 620px) {
+  .filter-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .filter-layout .field {
+    grid-column: 1 !important;
+  }
+  .employee-menu {
+    position: static;
+    margin-top: 5px;
+  }
+}

@@ -1,0 +1,84 @@
+"use strict";
+
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const ROOT = path.resolve(__dirname, "..");
+
+function read(relativePath) {
+  return fs.readFileSync(path.join(ROOT, relativePath), "utf8");
+}
+
+test("index referencia somente assets locais existentes", () => {
+  const html = read("index.html");
+  const references = [
+    ...html.matchAll(/<(?:link|script)\b[^>]+(?:href|src)="([^"]+)"/g),
+  ].map((match) => match[1]);
+
+  assert.equal(references.length, 19);
+  for (const reference of references) {
+    assert.equal(
+      fs.existsSync(path.join(ROOT, reference)),
+      true,
+      `Referência ausente: ${reference}`,
+    );
+  }
+});
+
+test("bootstrap permanece como último script", () => {
+  const html = read("index.html");
+  const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(
+    (match) => match[1],
+  );
+
+  assert.equal(scripts.at(-1), "assets/js/app.js");
+  assert.ok(
+    scripts.indexOf("assets/js/domain/record-rules.js") <
+      scripts.indexOf("assets/js/application/dashboard-service.js"),
+  );
+  assert.ok(
+    scripts.indexOf("assets/js/application/dashboard-service.js") <
+      scripts.indexOf("assets/js/presentation/controller.js"),
+  );
+});
+
+test("documentação arquitetural obrigatória está presente", () => {
+  const required = [
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "docs/USER_GUIDE.md",
+    "docs/TESTING.md",
+    "docs/SECURITY.md",
+    "docs/architecture/ARCHITECTURE.md",
+    "docs/architecture/PROJECT_STRUCTURE.md",
+    "docs/architecture/decisions/ADR-001-MODULARIZACAO.md",
+    "docs/reference/CLEAN_ARCHITECTURE.md",
+    "docs/reference/DESIGN_PATTERNS.md"
+  ];
+
+  for (const file of required) {
+    assert.equal(fs.existsSync(path.join(ROOT, file)), true, `Ausente: ${file}`);
+  }
+});
+
+test("guia do TOTVS usa componentes vetoriais e não capturas de tela", () => {
+  const html = read("index.html");
+
+  assert.equal(/<img\b/i.test(html), false);
+  assert.match(html, /class="totvs-preview preview-pontoweb"/);
+  assert.match(html, /class="totvs-preview preview-analytics"/);
+  assert.match(html, /class="totvs-preview preview-paineis"/);
+  assert.match(html, /class="totvs-preview preview-batidas"/);
+});
+
+test("cards agrupados e legenda do calendário estão implementados", () => {
+  const renderers = read("assets/js/presentation/renderers.js");
+
+  assert.match(renderers, /function groupRecordsByEmployee/);
+  assert.match(renderers, /recurrence-badge/);
+  assert.match(renderers, /employee-occurrences/);
+  assert.match(renderers, /calendar-status-legend/);
+});
