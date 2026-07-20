@@ -1,40 +1,10 @@
-PAINEL DE BATIDAS ÍMPARES — v1.2.1
-========================================
+PAINEL DE BATIDAS ÍMPARES — v1.3.0
 
-COMO USAR
-1. Abra index.html no Chrome, Edge ou Firefox atualizado.
-2. Na tela inicial, consulte o Guia Rápido e clique em “Acessar painel”.
-3. No TOTVS Ahgora, siga PontoWeb > Analytics > Painéis.
-4. Abra “Batidas Ímpares” e, na tabela “Lista de Batidas Ímpares”, clique nos três pontos.
-5. Escolha “Fazer download de resultados”, selecione JSON, CSV ou XLSX, mantenha “Manter os dados formatados” marcado e clique em “Baixar”.
-6. Na aplicação, clique em “Importar arquivo”.
+A documentação foi migrada para Markdown.
 
-ORGANIZAÇÃO DO PAINEL
-- Expander fechado: tutorial de download no TOTVS Ahgora.
-- Expander fechado: Cards, Filtros da consulta, Batidas por colaborador e Distribuição por status, em quatro colunas no modo wide.
-- Expander aberto: Tabela/Cards com as ocorrências encontradas.
+Abra:
+- README.md
+- docs/USER_GUIDE.md
+- docs/architecture/ARCHITECTURE.md
 
-NOVIDADES DA v1.2.1
-- Filtros organizados nas linhas: Colaborador | Busca; Status | Departamento; Data inicial | Data final | Linhas.
-- Busca recolhida por padrão: clique na lupa para abrir o campo de pesquisa.
-- Seleção de vários colaboradores por checkboxes, com contador de selecionados.
-- Ações rápidas para selecionar todos ou limpar a seleção de colaboradores.
-- Cards de ocorrência com cores próprias para pendências do empregado e do gestor.
-- Reconhecimento dos textos “Pendente do Empregado”, “Pendente Colaborador”, “Pendente do Gestor” e “Pendente Gestor”.
-
-RECURSOS
-- Matrícula exibida pelos 6 últimos dígitos.
-- Cards estatísticos clicáveis como filtros.
-- Filtros por texto, status, departamento, múltiplos colaboradores e período.
-- Visualização em tabela ou cards.
-- Detalhes completos pelo botão antes da coluna Dia.
-- Exportação detalhada em PDF, PNG e XLSX sem bibliotecas externas.
-- Persistência local da última importação.
-- Atalhos: / abre a consulta e a busca; Esc limpa os filtros.
-
-PRIVACIDADE
-Nenhum dado é enviado a servidores. O processamento ocorre localmente no navegador.
-
-AUTORIA
-Hagliberto Alves de Oliveira
-Currículo Lattes: https://lattes.cnpq.br/3494278420363616
+Para executar a aplicação, abra index.html.

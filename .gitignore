@@ -1,0 +1,18 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Temporários
+*.tmp
+*.log
+*.bak
+
+# Pacotes gerados
+*.zip
+
+# Checksums de pacotes de distribuição
+*.zip.sha256
