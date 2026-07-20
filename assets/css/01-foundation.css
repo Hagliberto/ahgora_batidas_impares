@@ -1,7 +1,7 @@
 /*
  * 01-foundation.css
  * Tokens, reset, appbar, guide, importação e indicadores.
- * Projeto: Ahgora — Batidas Ímpares v1.5.0
+ * Projeto: Ahgora — Batidas Ímpares v1.6.0
  */
 
 :root {
@@ -532,7 +532,7 @@ svg {
   font-weight: 850;
 }
 
-/* === v1.5.0 guia vetorial inspirado na navegação do TOTVS === */
+/* === v1.6.0 guia vetorial inspirado na navegação do TOTVS === */
 .totvs-route {
   align-items: stretch;
 }

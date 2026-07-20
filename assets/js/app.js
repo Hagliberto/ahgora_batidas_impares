@@ -7,6 +7,7 @@
 "use strict";
 
 function init() {
+  if (typeof restoreUiPreferences === "function") restoreUiPreferences();
   bind();
   if (restore()) {
     loadData(state.raw, state.fileName, false);

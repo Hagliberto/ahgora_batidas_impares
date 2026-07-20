@@ -1,7 +1,7 @@
 /*
  * 06-calendar.css
  * Visualização operacional em calendário 21 -> 20.
- * Projeto: Ahgora — Batidas Ímpares v1.5.0
+ * Projeto: Ahgora — Batidas Ímpares v1.6.0
  */
 
 .period-calendar-shell {
@@ -218,7 +218,7 @@
   }
 }
 
-/* === v1.5.0 legenda por responsável da pendência === */
+/* === v1.6.0 legenda por responsável da pendência === */
 .calendar-status-legend {
   display: flex;
   align-items: center;

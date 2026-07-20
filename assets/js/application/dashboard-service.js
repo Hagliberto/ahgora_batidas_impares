@@ -234,4 +234,6 @@ function renderAll() {
   updateSortMarks();
   $("#resultCount").textContent =
     state.filtered.length.toLocaleString("pt-BR");
+  if (typeof renderExperienceSummary === "function")
+    renderExperienceSummary();
 }

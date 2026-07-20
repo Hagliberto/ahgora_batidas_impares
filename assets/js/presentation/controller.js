@@ -85,6 +85,8 @@ function toggleAccordion(button) {
     open = button.getAttribute("aria-expanded") === "true";
   button.setAttribute("aria-expanded", String(!open));
   target.hidden = open;
+  if (typeof updateSectionsControl === "function") updateSectionsControl();
+  if (typeof saveUiPreferences === "function") saveUiPreferences();
 }
 function openCompactSearch() {
   const shell = $("#compactSearch");
@@ -115,6 +117,7 @@ function toggleEmployeeMenu() {
   else openEmployeeMenu();
 }
 function bind() {
+  if (typeof bindExperienceControls === "function") bindExperienceControls();
   $("#importBtn").addEventListener("click", () =>
     $("#fileInput").click(),
   );
@@ -239,6 +242,8 @@ function bind() {
       }
       state.currentPage = 1;
       applyFilters();
+      if (id === "pageSize" && typeof saveUiPreferences === "function")
+        saveUiPreferences();
     }),
   );
   $("#fullscreenBtn").addEventListener("click", () =>
@@ -268,13 +273,18 @@ function bind() {
     b.addEventListener("click", () => {
       state.view = b.dataset.view;
       state.currentPage = 1;
-      $$(".segmented button").forEach((x) =>
-        x.classList.toggle("active", x === b),
-      );
+      $$(".segmented button").forEach((x) => {
+        const active = x === b;
+        x.classList.toggle("active", active);
+        x.setAttribute("aria-pressed", String(active));
+      });
       renderTable();
       renderCards();
       renderCalendar();
       renderPagination();
+      if (typeof renderExperienceSummary === "function")
+        renderExperienceSummary();
+      if (typeof saveUiPreferences === "function") saveUiPreferences();
     }),
   );
 
@@ -292,10 +302,8 @@ function bind() {
       )
     ) {
       e.preventDefault();
-      const analysis = $('[data-accordion="analysisBody"]');
-      if (analysis.getAttribute("aria-expanded") !== "true")
-        toggleAccordion(analysis);
-      openCompactSearch();
+      if (typeof openGlobalSearch === "function") openGlobalSearch();
+      else openCompactSearch();
     }
   });
 }

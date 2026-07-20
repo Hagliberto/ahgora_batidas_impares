@@ -17,7 +17,10 @@ test("index referencia somente assets locais existentes", () => {
     ...html.matchAll(/<(?:link|script)\b[^>]+(?:href|src)="([^"]+)"/g),
   ].map((match) => match[1]);
 
-  assert.equal(references.length, 19);
+  assert.ok(references.length >= 20);
+  assert.ok(references.includes("assets/icons/favicon.svg"));
+  assert.ok(references.includes("assets/css/07-experience.css"));
+  assert.ok(references.includes("assets/js/presentation/experience.js"));
   for (const reference of references) {
     assert.equal(
       fs.existsSync(path.join(ROOT, reference)),
@@ -40,6 +43,14 @@ test("bootstrap permanece como último script", () => {
   );
   assert.ok(
     scripts.indexOf("assets/js/application/dashboard-service.js") <
+      scripts.indexOf("assets/js/presentation/controller.js"),
+  );
+  assert.ok(
+    scripts.indexOf("assets/js/presentation/renderers.js") <
+      scripts.indexOf("assets/js/presentation/experience.js"),
+  );
+  assert.ok(
+    scripts.indexOf("assets/js/presentation/experience.js") <
       scripts.indexOf("assets/js/presentation/controller.js"),
   );
 });
@@ -81,4 +92,24 @@ test("cards agrupados e legenda do calendário estão implementados", () => {
   assert.match(renderers, /recurrence-badge/);
   assert.match(renderers, /employee-occurrences/);
   assert.match(renderers, /calendar-status-legend/);
+});
+
+
+test("favicon e melhorias de experiência estão integrados", () => {
+  const html = read("index.html");
+  const experience = read("assets/js/presentation/experience.js");
+  const css = read("assets/css/07-experience.css");
+  const manifest = JSON.parse(read("project.manifest.json"));
+
+  assert.match(html, /assets\/icons\/favicon\.svg/);
+  assert.match(html, /id="contextStrip"/);
+  assert.match(html, /id="activeFilterShell"/);
+  assert.match(html, /id="densityBtn"/);
+  assert.match(html, /id="scrollTopBtn"/);
+  assert.match(experience, /function renderExperienceSummary/);
+  assert.match(experience, /function renderActiveFilters/);
+  assert.match(experience, /function restoreUiPreferences/);
+  assert.match(css, /\.context-strip/);
+  assert.match(css, /\.active-filter-shell/);
+  assert.equal(manifest.version, "1.6.0");
 });

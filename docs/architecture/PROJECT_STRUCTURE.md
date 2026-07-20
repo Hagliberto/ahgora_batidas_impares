@@ -42,3 +42,10 @@ Os arquivos são numerados para documentar e garantir a ordem de cascata.
 ## Ordem de carregamento
 
 A ordem dos `<script>` em `index.html` é parte do contrato do projeto. `app.js` deve permanecer por último.
+
+
+## Recursos de experiência da v1.6.0
+
+- `assets/icons/favicon.svg`: identidade visual do navegador.
+- `assets/css/07-experience.css`: acabamento visual, responsividade, densidade e acessibilidade.
+- `assets/js/presentation/experience.js`: resumo contextual, filtros ativos e preferências de interface.
