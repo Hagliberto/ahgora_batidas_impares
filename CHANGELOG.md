@@ -2,27 +2,41 @@
 
 Todas as mudanças relevantes deste projeto são registradas neste arquivo.
 
-## [1.5.0] — 20/07/2026
-
-### Alterado
-
-- removidas as capturas de tela usadas no guia do TOTVS;
-- passos do guia reconstruídos com ícones vetoriais e componentes visuais inspirados nos blocos originais de PontoWeb, Analytics, Painéis, Batidas Ímpares e download;
-- cards reorganizados em uma visão agrupada por empregado;
-- paginação dos cards passou a contabilizar empregados, evitando dividir as pendências do mesmo empregado entre páginas;
-- calendário recebeu legenda visual por responsável da pendência;
-- troca entre Tabela, Cards e Calendário agora reinicia corretamente a paginação.
+## [1.6.0] — 20/07/2026
 
 ### Adicionado
 
-- selo exclusivo de reincidência com total de pendências;
-- expander de pendências dentro de cada card de empregado;
-- filtros em pill por departamento, status e dia diretamente nos cards;
-- contadores de pendências do empregado, gestor e outras situações na legenda do calendário.
+- favicon vetorial próprio em `assets/icons/favicon.svg`;
+- barra de contexto com arquivo atual, período, registros filtrados e empregados;
+- barra de filtros ativos com remoção individual e limpeza geral;
+- alternância entre densidade compacta e confortável;
+- controle para expandir ou recolher todas as seções;
+- botão flutuante de retorno ao topo;
+- persistência da visualização, densidade, paginação e estado dos expanders.
 
-### Removido
+### Melhorado
 
-- pasta `assets/img/` criada na versão anterior para as imagens do passo a passo.
+- appbar com hierarquia mais clara, indicador de processamento local e acesso direto à pesquisa;
+- guia do TOTVS refeito apenas com componentes vetoriais, sem capturas de tela;
+- botões de visualização com ícones e estados acessíveis;
+- estados vazios com ações diretas de importação e limpeza de filtros;
+- foco de teclado, contraste, hover, espaçamento, responsividade e suporte a movimento reduzido;
+- consistência do versionamento exibido no HTML, manifesto, documentação e pacote.
+
+### Corrigido
+
+- teste do guia vetorial que detectava imagens ainda presentes no HTML da versão anterior;
+- referências inconsistentes de versão entre a interface e os metadados do projeto.
+
+## [1.5.0] — 20/07/2026
+
+### Adicionado
+
+- cards agrupados por empregado;
+- selo visual de reincidência;
+- expander com todas as pendências do empregado;
+- legenda do calendário por responsável da pendência;
+- componentes vetoriais inspirados na navegação do TOTVS.
 
 ## [1.4.0] — 20/07/2026
 

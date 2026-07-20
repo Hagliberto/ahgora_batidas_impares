@@ -1,7 +1,7 @@
 /*
  * 02-components.css
  * Filtros, painéis, tabelas, cards, modais e feedback visual.
- * Projeto: Ahgora — Batidas Ímpares v1.5.0
+ * Projeto: Ahgora — Batidas Ímpares v1.6.0
  */
 
 .filter-card {
@@ -868,7 +868,7 @@ footer {
   color: #475467;
 }
 
-/* === v1.4.0 ajustes de visualização e detalhes === */
+/* === v1.6.0 ajustes de visualização e detalhes === */
 .mat-col-head,
 .mat-col {
   text-align: center;
@@ -1050,7 +1050,7 @@ footer {
   }
 }
 
-/* === v1.5.0 cards agrupados por empregado e selo de reincidência === */
+/* === v1.6.0 cards agrupados por empregado e selo de reincidência === */
 .employee-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(360px, 1fr));

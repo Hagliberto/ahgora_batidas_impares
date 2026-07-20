@@ -54,3 +54,13 @@ O menu de exportação disponibiliza:
 ## 8. Privacidade
 
 Nenhum dado é enviado para servidores. O processamento e a persistência ocorrem localmente no navegador.
+
+
+## Recursos de usabilidade
+
+- Use o botão **Pesquisar** ou a tecla `/` para abrir a busca.
+- A barra superior informa arquivo, período, registros e empregados do recorte.
+- Os filtros ativos aparecem em pills e podem ser removidos individualmente.
+- O botão **Seções** expande ou recolhe todos os expanders.
+- O botão de densidade alterna entre espaçamento confortável e compacto.
+- A visualização escolhida e o estado das seções são preservados no navegador.

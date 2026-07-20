@@ -14,5 +14,5 @@ Thumbs.db
 # Pacotes gerados
 *.zip
 
-# Checksums de pacotes de distribuição
+# Checksums de distribuição
 *.zip.sha256

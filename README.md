@@ -13,10 +13,16 @@ O projeto funciona diretamente no navegador, sem servidor, banco de dados ou dep
 - Filtros por colaborador, status, departamento e período.
 - Seleção de múltiplos colaboradores.
 - Cards e indicadores interativos.
-- Visualização em tabela, cards e calendário.
+- Visualização em tabela, cards agrupados por empregado e calendário operacional 21 → 20.
 - Exportação para PDF, PNG e XLSX.
-- Persistência local da última importação.
+- Persistência local da última importação e das preferências de interface.
 - Atalhos de teclado: `/` abre a busca e `Esc` limpa os filtros.
+- Favicon vetorial próprio, compatível com abertura local.
+- Barra de contexto com arquivo, período, registros e empregados do recorte.
+- Filtros ativos removíveis individualmente.
+- Densidade compacta ou confortável.
+- Expansão e recolhimento conjunto das seções.
+- Botão flutuante para retorno ao topo.
 - Processamento integralmente local no navegador.
 
 ## Como executar
@@ -34,6 +40,7 @@ Não é necessário instalar pacotes ou iniciar servidor.
 ├── index.html
 ├── assets/
 │   ├── css/
+│   ├── icons/
 │   └── js/
 │       ├── application/
 │       ├── config/
@@ -70,4 +77,4 @@ O projeto usa scripts clássicos externos, em ordem explícita, para continuar f
 
 ## Versão
 
-**v1.5.0**
+**v1.6.0**
