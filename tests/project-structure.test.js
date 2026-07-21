@@ -121,7 +121,7 @@ test("favicon e experiência simplificada estão integrados", () => {
   assert.match(polish, /#exportMenuBtn/);
   assert.match(polish, /\.welcome-hero/);
   assert.match(polish, /\.has-tooltip/);
-  assert.equal(manifest.version, "1.8.0");
+  assert.equal(manifest.version, "1.8.1");
 });
 
 
@@ -145,4 +145,15 @@ test("cards por empregado e departamento, guia wide e exportação brasileira es
   assert.match(xlsx, /formatDateTimeBr\(\)/);
   assert.match(css, /\.welcome-paper\.welcome-modern/);
   assert.match(css, /guide-icon-draw/);
+});
+
+
+test("tooltip de limpeza abre para baixo sem sobrepor o expander anterior", () => {
+  const css = read("assets/css/10-v181-hotfix.css");
+
+  assert.match(css, /results-clear-filter\.has-tooltip::before/);
+  assert.match(css, /top:\s*calc\(100% \+ 3px\)/);
+  assert.match(css, /results-clear-filter\.has-tooltip::after/);
+  assert.match(css, /top:\s*calc\(100% \+ 8px\)/);
+  assert.match(css, /bottom:\s*auto/);
 });

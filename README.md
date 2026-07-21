@@ -82,4 +82,4 @@ O projeto usa scripts clássicos externos, em ordem explícita, para continuar f
 
 ## Versão
 
-**v1.8.0**
+**v1.8.1**
