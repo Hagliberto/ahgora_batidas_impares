@@ -214,7 +214,7 @@ function exportXlsx() {
           "Localizações",
         ],
         rows = state.filtered.map((r) => [
-          r.dia,
+          r.dateObj ? formatDate(r.dateObj) : r.dia,
           r.matricula,
           r.nome,
           r.status,
@@ -257,7 +257,7 @@ function exportXlsx() {
           ["Arquivo de origem", state.fileName],
           ["Registros filtrados", state.filtered.length],
           ["Período", dateRangeText(state.filtered)],
-          ["Gerado em", new Date().toLocaleString("pt-BR")],
+          ["Gerado em", formatDateTimeBr()],
         ],
         meta = sheetXml(
           ["Informação", "Valor"],

@@ -172,13 +172,19 @@ function renderTable() {
 function buildCardsToolbar() {
   const totalOccurrences = state.filtered.length,
     totalEmployees = groupRecordsByEmployee().length,
+    totalDepartments = groupRecordsByDepartment().length,
     statuses = [
-      ...new Set(state.filtered.map((r) => r.status).filter(Boolean)),
+      ...new Set(state.filtered.map((record) => record.status).filter(Boolean)),
     ].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
 
-  return `<div class="cards-toolbar"><div class="cards-toolbar-copy"><strong>Visão agrupada por empregado</strong><span>${totalEmployees.toLocaleString("pt-BR")} empregado(s) • ${totalOccurrences.toLocaleString("pt-BR")} pendência(s). Use os pills para refinar o recorte.</span></div><div class="cards-toolbar-pills"><button class="record-filter-pill accent ${!state.quickStatus ? "active" : ""}" data-card-toolbar-filter="all">Todos <strong>${totalOccurrences}</strong></button>${statuses
+  const groupingLabel =
+    state.cardGrouping === "department"
+      ? `${totalDepartments.toLocaleString("pt-BR")} departamento(s) • ${totalEmployees.toLocaleString("pt-BR")} empregado(s)`
+      : `${totalEmployees.toLocaleString("pt-BR")} empregado(s) • ${totalOccurrences.toLocaleString("pt-BR")} pendência(s)`;
+
+  return `<div class="cards-toolbar enhanced"><div class="cards-toolbar-copy"><strong>${state.cardGrouping === "department" ? "Visão agrupada por departamento" : "Visão agrupada por empregado"}</strong><span>${groupingLabel}. As pendências são organizadas em colunas para facilitar a conferência.</span></div><div class="cards-grouping-switch" role="group" aria-label="Agrupamento dos cards"><button type="button" data-card-grouping="employee" class="${state.cardGrouping === "employee" ? "active" : ""}" aria-pressed="${state.cardGrouping === "employee"}"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg><span>Por empregado</span></button><button type="button" data-card-grouping="department" class="${state.cardGrouping === "department" ? "active" : ""}" aria-pressed="${state.cardGrouping === "department"}"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg><span>Por departamento</span></button></div><div class="cards-toolbar-pills"><button class="record-filter-pill accent ${!state.quickStatus ? "active" : ""}" data-card-toolbar-filter="all">Todos <strong>${totalOccurrences}</strong></button>${statuses
     .map((status) => {
-      const count = state.filtered.filter((r) => r.status === status).length;
+      const count = state.filtered.filter((record) => record.status === status).length;
       return `<button class="record-filter-pill ${state.quickStatus === status ? "active" : ""}" data-card-toolbar-filter="status" data-value="${escapeHtml(status)}">${escapeHtml(status)} <strong>${count}</strong></button>`;
     })
     .join("")}</div></div>`;
@@ -214,16 +220,59 @@ function groupRecordsByEmployee(rows = state.filtered) {
     );
 }
 
+function groupRecordsByDepartment(rows = state.filtered) {
+  const groups = new Map();
+  rows.forEach((record) => {
+    const key = record.departamento || "Departamento não informado",
+      item = groups.get(key) || {
+        key,
+        departamento: key,
+        records: [],
+      };
+    item.records.push(record);
+    groups.set(key, item);
+  });
+
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      employees: groupRecordsByEmployee(group.records),
+    }))
+    .sort((a, b) => {
+      const ap = departmentParts(a.departamento),
+        bp = departmentParts(b.departamento);
+      return String(ap.name || ap.code || "").localeCompare(
+        String(bp.name || bp.code || ""),
+        "pt-BR",
+        { numeric: true },
+      );
+    });
+}
+
+function currentCardGroups() {
+  return state.cardGrouping === "department"
+    ? groupRecordsByDepartment()
+    : groupRecordsByEmployee();
+}
+
 function pageCardGroups() {
-  const groups = groupRecordsByEmployee(),
+  const groups = currentCardGroups(),
     start = (state.currentPage - 1) * state.pageSize;
   return groups.slice(start, start + state.pageSize);
 }
 
-function renderEmployeeCard(group) {
+function renderOccurrenceColumn(record, index, total) {
+  const iso = record.dateObj
+    ? `${record.dateObj.getFullYear()}-${String(record.dateObj.getMonth() + 1).padStart(2, "0")}-${String(record.dateObj.getDate()).padStart(2, "0")}`
+    : "";
+  return `<article class="employee-occurrence-column ${cardStatusClass(record.status)}"><div class="occurrence-column-head"><button class="occurrence-date-pill" type="button" data-card-filter="date" data-value="${escapeHtml(iso)}" title="Filtrar apenas esta data"><span>${escapeHtml(record.dia || "—")}</span><small>Pendência ${index + 1} de ${total}</small></button><button class="detail-btn occurrence-detail-btn" data-card-id="${record.id}" title="Abrir detalhes da ocorrência" aria-label="Abrir detalhes da ocorrência"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div><div class="occurrence-column-status"><span class="status-pill ${statusClass(record.status)}">${escapeHtml(record.status)}</span></div></article>`;
+}
+
+function renderEmployeeCard(group, options = {}) {
   const primary = group.records[0],
     department = departmentParts(group.departamento),
-    statusCounts = new Map();
+    statusCounts = new Map(),
+    insideDepartment = Boolean(options.insideDepartment);
 
   group.records.forEach((record) =>
     statusCounts.set(record.status, (statusCounts.get(record.status) || 0) + 1),
@@ -239,38 +288,30 @@ function renderEmployeeCard(group) {
           `<button class="record-filter-pill status-filter ${statusClass(status)}" type="button" data-card-filter="status" data-value="${escapeHtml(status)}">${escapeHtml(status)} <strong>${count}</strong></button>`,
       )
       .join(""),
-    occurrenceRows = group.records
-      .map((record, index) => {
-        const iso = record.dateObj
-          ? `${record.dateObj.getFullYear()}-${String(record.dateObj.getMonth() + 1).padStart(2, "0")}-${String(record.dateObj.getDate()).padStart(2, "0")}`
-          : "";
-        return `<div class="employee-occurrence-row"><button class="occurrence-date-pill" type="button" data-card-filter="date" data-value="${escapeHtml(iso)}"><span>${escapeHtml(record.dia || "—")}</span><small>Dia ${index + 1} de ${group.records.length}</small></button><div class="occurrence-status"><span class="status-pill ${statusClass(record.status)}">${escapeHtml(record.status)}</span></div><div class="occurrence-location" title="${escapeHtml(record.localizacoes || "")}">${escapeHtml(record.localizacoes || "Localização não informada")}</div><button class="detail-btn occurrence-detail-btn" data-card-id="${record.id}" title="Abrir detalhes da ocorrência"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div>`;
-      })
+    occurrenceColumns = group.records
+      .map((record, index) => renderOccurrenceColumn(record, index, group.records.length))
       .join("");
 
-  return `<article class="employee-record-card ${recurrence ? "is-recurrent" : ""} ${cardStatusClass(primary.status)}"><div class="employee-card-accent"></div><div class="employee-card-top"><div class="employee-card-identity"><span class="mat-pill large centered">${escapeHtml(group.matricula)}</span><div><h3>${escapeHtml(group.nome || "Sem nome")}</h3><p>${escapeHtml(group.cargo || "Cargo não informado")}</p></div></div>${recurrenceBadge}</div><div class="employee-card-filter-row"><button class="record-filter-pill dept-filter" type="button" data-card-filter="dept" data-value="${escapeHtml(group.departamento || "")}">${escapeHtml(department.code || department.name || "Departamento")}</button>${statusPills}</div><div class="employee-card-department"><span>Departamento</span><strong>${escapeHtml((department.code ? department.code + " — " : "") + (department.name || "Não informado"))}</strong></div><details class="employee-occurrences" ${group.records.length <= 4 ? "open" : ""}><summary><span>Pendências do empregado</span><strong>${group.records.length}</strong><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></summary><div class="employee-occurrence-list">${occurrenceRows}</div></details></article>`;
+  const departmentFilter = insideDepartment
+    ? ""
+    : `<button class="record-filter-pill dept-filter" type="button" data-card-filter="dept" data-value="${escapeHtml(group.departamento || "")}" title="Filtrar este departamento">${escapeHtml(department.code || department.name || "Departamento")}</button>`;
+  const departmentBlock = insideDepartment
+    ? ""
+    : `<div class="employee-card-department"><span>Departamento</span><strong>${escapeHtml((department.code ? department.code + " — " : "") + (department.name || "Não informado"))}</strong></div>`;
+
+  return `<article class="employee-record-card ${insideDepartment ? "inside-department" : ""} ${recurrence ? "is-recurrent" : ""} ${cardStatusClass(primary.status)}"><div class="employee-card-accent"></div><div class="employee-card-top"><div class="employee-card-identity"><span class="mat-pill large centered">${escapeHtml(group.matricula)}</span><div><h3>${escapeHtml(group.nome || "Sem nome")}</h3><p>${escapeHtml(group.cargo || "Cargo não informado")}</p></div></div>${recurrenceBadge}</div><div class="employee-card-filter-row">${departmentFilter}${statusPills}</div>${departmentBlock}<details class="employee-occurrences" open><summary><span>Pendências do empregado</span><strong>${group.records.length}</strong><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></summary><div class="employee-occurrence-list column-layout">${occurrenceColumns}</div></details></article>`;
 }
 
-function renderCards() {
-  const groups = pageCardGroups(),
-    cards = $("#cardsView"),
-    empty = $("#emptyState");
-  cards.classList.toggle(
-    "show",
-    state.view === "cards" && groups.length > 0,
-  );
-  if (state.view !== "cards") {
-    cards.innerHTML = "";
-    return;
-  }
+function renderDepartmentGroup(group) {
+  const department = departmentParts(group.departamento),
+    employeeCount = group.employees.length,
+    occurrenceCount = group.records.length;
+  return `<section class="department-card-group"><header class="department-group-head"><div class="department-group-icon"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg></div><div class="department-group-copy"><span>${escapeHtml(department.code || "DEPARTAMENTO")}</span><h3>${escapeHtml(department.name || group.departamento || "Não informado")}</h3><p>${employeeCount.toLocaleString("pt-BR")} empregado(s) • ${occurrenceCount.toLocaleString("pt-BR")} pendência(s)</p></div><button class="record-filter-pill dept-filter" type="button" data-card-filter="dept" data-value="${escapeHtml(group.departamento || "")}" title="Exibir somente este departamento">Filtrar departamento</button></header><div class="department-employees-grid">${group.employees
+    .map((employee) => renderEmployeeCard(employee, { insideDepartment: true }))
+    .join("")}</div></section>`;
+}
 
-  empty.classList.toggle("show", !groups.length);
-  cards.innerHTML = groups.length
-    ? `${buildCardsToolbar()}<div class="employee-cards-grid">${groups
-        .map(renderEmployeeCard)
-        .join("")}</div>`
-    : "";
-
+function bindCardControls() {
   $$('[data-card-id]').forEach((button) =>
     button.addEventListener("click", () => openDetails(button.dataset.cardId)),
   );
@@ -298,6 +339,45 @@ function renderCards() {
       );
     }),
   );
+
+  $$('[data-card-grouping]').forEach((button) =>
+    button.addEventListener("click", () => {
+      const grouping = button.dataset.cardGrouping;
+      if (!['employee', 'department'].includes(grouping)) return;
+      state.cardGrouping = grouping;
+      state.currentPage = 1;
+      renderCards();
+      renderPagination();
+      if (typeof saveUiPreferences === "function") saveUiPreferences();
+    }),
+  );
+}
+
+function renderCards() {
+  const groups = pageCardGroups(),
+    cards = $("#cardsView"),
+    empty = $("#emptyState");
+  cards.classList.toggle(
+    "show",
+    state.view === "cards" && groups.length > 0,
+  );
+  if (state.view !== "cards") {
+    cards.innerHTML = "";
+    return;
+  }
+
+  empty.classList.toggle("show", !groups.length);
+  cards.innerHTML = groups.length
+    ? `${buildCardsToolbar()}<div class="${state.cardGrouping === "department" ? "department-groups-list" : "employee-cards-grid"}">${groups
+        .map((group) =>
+          state.cardGrouping === "department"
+            ? renderDepartmentGroup(group)
+            : renderEmployeeCard(group),
+        )
+        .join("")}</div>`
+    : "";
+
+  bindCardControls();
 }
 
 function applyCardFilter(type, value) {
@@ -317,68 +397,176 @@ function applyCardFilter(type, value) {
   applyFilters();
 }
 
-function buildCalendarMonth(monthDate, bounds, recordsByDay, sideLabel) {
+const CALENDAR_EXPANDERS_KEY = "batidasImparesCalendarMonthsV1";
+
+function readCalendarExpanderPreferences() {
+  try {
+    const value = JSON.parse(
+      localStorage.getItem(CALENDAR_EXPANDERS_KEY) || "null",
+    );
+    return value && typeof value === "object"
+      ? value
+      : { opening: true, closing: true };
+  } catch {
+    return { opening: true, closing: true };
+  }
+}
+
+function saveCalendarExpanderPreferences() {
+  const preferences = {};
+  $$("#calendarMonthPair .calendar-month-expander").forEach((panel) => {
+    preferences[panel.dataset.calendarKey] = panel.open;
+  });
+  localStorage.setItem(CALENDAR_EXPANDERS_KEY, JSON.stringify(preferences));
+}
+
+function calendarDayTooltip(dateObj, dayRecords, inPeriod) {
+  const label = formatDate(dateObj),
+    period = inPeriod ? "dentro do período 21 → 20" : "fora do período operacional";
+  if (!dayRecords.length)
+    return `${label} • ${period} • sem pendências no recorte atual`;
+
+  const groups = { empregado: 0, gestor: 0, outro: 0 };
+  dayRecords.forEach((record) => {
+    const group = statusGroup(record.status);
+    groups[group === "empregado" || group === "gestor" ? group : "outro"]++;
+  });
+  const parts = [];
+  if (groups.empregado) parts.push(`${groups.empregado} do empregado`);
+  if (groups.gestor) parts.push(`${groups.gestor} do gestor`);
+  if (groups.outro) parts.push(`${groups.outro} outra(s)`);
+  return `${label} • ${period} • ${dayRecords.length} pendência(s): ${parts.join(", ")} • clique para filtrar o dia`;
+}
+
+function buildCalendarMonth(
+  monthDate,
+  bounds,
+  recordsByDay,
+  sideLabel,
+  calendarKey,
+) {
   const year = monthDate.getFullYear(),
     month = monthDate.getMonth(),
     firstDayIndex = new Date(year, month, 1).getDay(),
     totalDays = new Date(year, month + 1, 0).getDate(),
-    weekdays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    weekdays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+    monthLabel = new Date(year, month).toLocaleString("pt-BR", {
+      month: "long",
+      year: "numeric",
+    }),
+    rangeLabel =
+      month === bounds.startMonth.getMonth() &&
+      year === bounds.startMonth.getFullYear()
+        ? "21 até o fim do mês"
+        : "1 a 20 do mês",
+    preferences = readCalendarExpanderPreferences(),
+    open = preferences[calendarKey] !== false,
+    monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}-`,
+    monthRecords = Object.entries(recordsByDay)
+      .filter(([date]) => date.startsWith(monthPrefix))
+      .reduce((sum, [, records]) => sum + records.length, 0),
+    tone = calendarKey === "opening" ? "opening" : "closing";
 
-  let html = `<section class="calendar-month-card"><div class="calendar-month-head"><div><h3>${new Date(year, month).toLocaleString("pt-BR", { month: "long", year: "numeric" })}</h3><p>${sideLabel}</p></div><span class="calendar-month-range">${month === bounds.startMonth.getMonth() && year === bounds.startMonth.getFullYear() ? "21 até o fim do mês" : "1 a 20 do mês"}</span></div><div class="calendar-grid dual">`;
+  let html = `<details class="calendar-month-expander ${tone}" data-calendar-key="${calendarKey}" ${open ? "open" : ""}><summary class="calendar-month-trigger"><span class="calendar-month-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/><path d="M8 14h3m2 0h3m-8 3h3"/></svg></span><span class="calendar-month-copy"><strong>${monthLabel}</strong><small>${sideLabel}</small></span><span class="calendar-month-meta"><span class="calendar-month-total">${monthRecords} pendência(s)</span><span class="calendar-month-range">${rangeLabel}</span></span><span class="calendar-month-chevron"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="calendar-month-body"><div class="calendar-month-help"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Clique no número do dia para filtrar. Passe o mouse sobre dias e pendências para visualizar detalhes.</span></div><div class="calendar-grid dual">`;
 
   weekdays.forEach(
-    (w) => (html += `<div class="calendar-day-head">${w}</div>`),
+    (weekday) =>
+      (html += `<div class="calendar-day-head">${weekday}</div>`),
   );
 
-  for (let i = 0; i < firstDayIndex; i++)
-    html += '<div class="calendar-cell other-month"></div>';
+  for (let index = 0; index < firstDayIndex; index++)
+    html += '<div class="calendar-cell other-month" aria-hidden="true"></div>';
 
   for (let day = 1; day <= totalDays; day++) {
     const dateObj = new Date(year, month, day),
       dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
-      dayRecords = recordsByDay[dateStr] || [];
+      dayRecords = recordsByDay[dateStr] || [],
+      inPeriod =
+        dateObj.getTime() >= bounds.startDate.getTime() &&
+        dateObj.getTime() <= bounds.endDate.getTime(),
+      tooltip = calendarDayTooltip(dateObj, dayRecords, inPeriod);
 
-    const inPeriod =
-      dateObj.getTime() >= bounds.startDate.getTime() &&
-      dateObj.getTime() <= bounds.endDate.getTime();
-
-    html += `<div class="calendar-cell ${inPeriod ? "period-active" : "period-muted"}" onclick="window.focusOnDay('${dateStr}')"><div class="calendar-cell-top"><div class="calendar-cell-num">${day}</div>${dayRecords.length ? `<span class="calendar-count-pill">${dayRecords.length}</span>` : ""}</div><div class="calendar-badges-wrap">${dayRecords
-      .map((r) => {
-        const bg =
-          statusGroup(r.status) === "empregado"
-            ? "var(--cyan)"
-            : statusGroup(r.status) === "gestor"
-              ? "var(--red)"
-              : "var(--amber)";
-        return `<div class="calendar-badge" style="background:${bg}" title="${escapeHtml(r.nome || "Sem nome")} • Matrícula: ${escapeHtml(r.matricula)} • Status: ${escapeHtml(r.status)}" onclick="event.stopPropagation(); window.openDetails('${r.id}')">${escapeHtml((r.nome || "Sem nome").split(" ")[0])}</div>`;
+    html += `<div class="calendar-cell ${inPeriod ? "period-active" : "period-muted"}"><button type="button" class="calendar-day-button has-tooltip" data-tooltip="${escapeHtml(tooltip)}" aria-label="${escapeHtml(tooltip)}" onclick="window.focusOnDay('${dateStr}')"><span class="calendar-cell-num">${day}</span>${dayRecords.length ? `<span class="calendar-count-pill">${dayRecords.length}</span>` : ""}</button><div class="calendar-badges-wrap">${dayRecords
+      .slice(0, 3)
+      .map((record) => {
+        const group = statusGroup(record.status),
+          badgeClass =
+            group === "empregado"
+              ? "employee"
+              : group === "gestor"
+                ? "manager"
+                : "other",
+          badgeTooltip = `${record.nome || "Sem nome"} • matrícula ${record.matricula || "—"} • ${record.status || "Status não informado"} • clique para abrir os detalhes`;
+        return `<button type="button" class="calendar-badge ${badgeClass} has-tooltip" data-tooltip="${escapeHtml(badgeTooltip)}" aria-label="${escapeHtml(badgeTooltip)}" onclick="event.stopPropagation(); window.openDetails('${record.id}')">${escapeHtml((record.nome || "Sem nome").split(" ")[0])}</button>`;
       })
-      .join("")}</div></div>`;
+      .join("")}${dayRecords.length > 3 ? `<span class="calendar-more-badge has-tooltip" data-tooltip="Há mais ${dayRecords.length - 3} pendência(s) neste dia. Clique no número do dia para isolar todas.">+${dayRecords.length - 3} outras</span>` : ""}</div></div>`;
   }
 
-  const totalCellsWritten = firstDayIndex + totalDays;
-  const rem = totalCellsWritten % 7;
-  if (rem > 0) {
-    for (let i = 0; i < 7 - rem; i++)
-      html += '<div class="calendar-cell other-month"></div>';
+  const totalCellsWritten = firstDayIndex + totalDays,
+    remainder = totalCellsWritten % 7;
+  if (remainder > 0) {
+    for (let index = 0; index < 7 - remainder; index++)
+      html += '<div class="calendar-cell other-month" aria-hidden="true"></div>';
   }
 
-  html += "</div></section>";
+  html += "</div></div></details>";
   return html;
+}
+
+function updateCalendarMonthLayout(persist = true) {
+  const wrapper = $("#calendarMonthPair");
+  if (!wrapper) return;
+  const panels = $$("#calendarMonthPair .calendar-month-expander"),
+    openPanels = panels.filter((panel) => panel.open);
+  wrapper.classList.toggle("calendar-layout-double", openPanels.length === 2);
+  wrapper.classList.toggle("calendar-layout-single", openPanels.length === 1);
+  wrapper.classList.toggle("calendar-layout-closed", openPanels.length === 0);
+  panels.forEach((panel) =>
+    panel.classList.toggle("is-only-open", openPanels.length === 1 && panel.open),
+  );
+  if (persist) saveCalendarExpanderPreferences();
+}
+
+function bindCalendarMonthExpanders() {
+  $$("#calendarMonthPair .calendar-month-expander").forEach((panel) =>
+    panel.addEventListener("toggle", () => updateCalendarMonthLayout()),
+  );
+  $("#calendarOpenAll")?.addEventListener("click", () => {
+    $$("#calendarMonthPair .calendar-month-expander").forEach(
+      (panel) => (panel.open = true),
+    );
+    updateCalendarMonthLayout();
+  });
+  $("#calendarCloseAll")?.addEventListener("click", () => {
+    $$("#calendarMonthPair .calendar-month-expander").forEach(
+      (panel) => (panel.open = false),
+    );
+    updateCalendarMonthLayout();
+  });
+  updateCalendarMonthLayout(false);
 }
 
 function resolveOperationalPeriod(rows) {
   const dates = rows
-    .map((r) => r.dateObj)
+    .map((record) => record.dateObj)
     .filter(Boolean)
     .sort((a, b) => a - b);
-  const ref = dates[0] || new Date();
-  const startMonth =
-    ref.getDate() >= 21
-      ? new Date(ref.getFullYear(), ref.getMonth(), 1)
-      : new Date(ref.getFullYear(), ref.getMonth() - 1, 1);
-  const endMonth = new Date(startMonth.getFullYear(), startMonth.getMonth() + 1, 1);
-  const startDate = new Date(startMonth.getFullYear(), startMonth.getMonth(), 21);
-  const endDate = new Date(endMonth.getFullYear(), endMonth.getMonth(), 20);
+  const reference = dates[0] || new Date(),
+    startMonth =
+      reference.getDate() >= 21
+        ? new Date(reference.getFullYear(), reference.getMonth(), 1)
+        : new Date(reference.getFullYear(), reference.getMonth() - 1, 1),
+    endMonth = new Date(
+      startMonth.getFullYear(),
+      startMonth.getMonth() + 1,
+      1,
+    ),
+    startDate = new Date(
+      startMonth.getFullYear(),
+      startMonth.getMonth(),
+      21,
+    ),
+    endDate = new Date(endMonth.getFullYear(), endMonth.getMonth(), 20);
   return { startMonth, endMonth, startDate, endDate };
 }
 
@@ -387,16 +575,16 @@ function renderCalendar() {
     table = $("#tableWrap"),
     cards = $("#cardsView"),
     empty = $("#emptyState"),
-    pag = $("#paginationWrapper");
+    pagination = $("#paginationWrapper");
   if (state.view !== "calendar") {
     container.style.display = "none";
-    pag.style.display = "flex";
+    pagination.style.display = "flex";
     return;
   }
 
   table.style.display = "none";
   cards.classList.remove("show");
-  pag.style.display = "none";
+  pagination.style.display = "none";
 
   const rows = state.filtered;
   if (!rows.length) {
@@ -408,14 +596,14 @@ function renderCalendar() {
   container.style.display = "block";
   empty.classList.remove("show");
 
-  const bounds = resolveOperationalPeriod(rows);
-  const recordsByDay = {};
+  const bounds = resolveOperationalPeriod(rows),
+    recordsByDay = {};
 
-  rows.forEach((r) => {
-    if (!r.dateObj) return;
-    const dateStr = `${r.dateObj.getFullYear()}-${String(r.dateObj.getMonth() + 1).padStart(2, "0")}-${String(r.dateObj.getDate()).padStart(2, "0")}`;
+  rows.forEach((record) => {
+    if (!record.dateObj) return;
+    const dateStr = `${record.dateObj.getFullYear()}-${String(record.dateObj.getMonth() + 1).padStart(2, "0")}-${String(record.dateObj.getDate()).padStart(2, "0")}`;
     if (!recordsByDay[dateStr]) recordsByDay[dateStr] = [];
-    recordsByDay[dateStr].push(r);
+    recordsByDay[dateStr].push(record);
   });
 
   const statusLegend = { empregado: 0, gestor: 0, outro: 0 };
@@ -424,15 +612,22 @@ function renderCalendar() {
     statusLegend[group === "empregado" || group === "gestor" ? group : "outro"]++;
   });
 
-  container.innerHTML = `<div class="period-calendar-shell"><div class="period-calendar-header"><div><h3>Calendário operacional da competência</h3><p>Visualização de ${formatDate(bounds.startDate)} a ${formatDate(bounds.endDate)} com destaque apenas para o período efetivo de conferência.</p></div><div class="period-calendar-legend"><span class="legend-pill active">Período em destaque: 21 → 20</span><span class="legend-pill muted">Dias fora do período ficam em cinza claro</span></div></div><div class="calendar-status-legend" aria-label="Legenda por responsável da pendência"><span class="calendar-status-key employee"><i></i><span>Pendente do empregado</span><strong>${statusLegend.empregado}</strong></span><span class="calendar-status-key manager"><i></i><span>Pendente do gestor</span><strong>${statusLegend.gestor}</strong></span><span class="calendar-status-key other"><i></i><span>Outras situações</span><strong>${statusLegend.outro}</strong></span></div><div class="period-calendar-pair">${buildCalendarMonth(bounds.startMonth, bounds, recordsByDay, "Mês de abertura do período")} ${buildCalendarMonth(bounds.endMonth, bounds, recordsByDay, "Mês de fechamento do período")}</div></div>`;
+  container.innerHTML = `<div class="period-calendar-shell"><div class="period-calendar-header"><div><span class="calendar-kicker">COMPETÊNCIA OPERACIONAL</span><h3>Calendário de ${formatDate(bounds.startDate)} a ${formatDate(bounds.endDate)}</h3><p>Abra ou recolha cada mês de forma independente. Quando somente um calendário estiver aberto, ele ocupará o centro da visualização.</p></div><div class="calendar-panel-actions"><button type="button" id="calendarOpenAll" class="calendar-action-button has-tooltip" data-tooltip="Exibir os dois calendários lado a lado"><svg viewBox="0 0 24 24"><path d="M4 5h7v14H4zM13 5h7v14h-7z"/></svg><span>Abrir ambos</span></button><button type="button" id="calendarCloseAll" class="calendar-action-button has-tooltip" data-tooltip="Recolher os dois calendários e manter apenas os cabeçalhos"><svg viewBox="0 0 24 24"><path d="M5 8h14M7 12h10M9 16h6"/></svg><span>Recolher</span></button></div></div><div class="period-calendar-legend"><span class="legend-pill active">Período em destaque: 21 → 20</span><span class="legend-pill muted">Dias fora do período em cinza claro</span></div><div class="calendar-status-legend" aria-label="Legenda por responsável da pendência"><span class="calendar-status-key employee has-tooltip" data-tooltip="Ocorrências que aguardam ação do empregado"><i></i><span>Pendente do empregado</span><strong>${statusLegend.empregado}</strong></span><span class="calendar-status-key manager has-tooltip" data-tooltip="Ocorrências que aguardam ação da gestão"><i></i><span>Pendente do gestor</span><strong>${statusLegend.gestor}</strong></span><span class="calendar-status-key other has-tooltip" data-tooltip="Demais situações identificadas no arquivo"><i></i><span>Outras situações</span><strong>${statusLegend.outro}</strong></span></div><div class="period-calendar-pair" id="calendarMonthPair">${buildCalendarMonth(bounds.startMonth, bounds, recordsByDay, "Mês de abertura do período", "opening")} ${buildCalendarMonth(bounds.endMonth, bounds, recordsByDay, "Mês de fechamento do período", "closing")}</div></div>`;
+
+  bindCalendarMonthExpanders();
 }
 
 function renderPagination() {
   const totalItems =
       state.view === "cards"
-        ? groupRecordsByEmployee().length
+        ? currentCardGroups().length
         : state.filtered.length,
-    itemLabel = state.view === "cards" ? "empregado(s)" : "registro(s)",
+    itemLabel =
+      state.view === "cards"
+        ? state.cardGrouping === "department"
+          ? "departamento(s)"
+          : "empregado(s)"
+        : "registro(s)",
     totalPages = Math.max(1, Math.ceil(totalItems / state.pageSize));
 
   if (state.currentPage > totalPages) state.currentPage = totalPages;

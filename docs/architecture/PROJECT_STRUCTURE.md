@@ -44,8 +44,12 @@ Os arquivos são numerados para documentar e garantir a ordem de cascata.
 A ordem dos `<script>` em `index.html` é parte do contrato do projeto. `app.js` deve permanecer por último.
 
 
-## Recursos de experiência da v1.6.0
+## Recursos de experiência da v1.8.0
 
 - `assets/icons/favicon.svg`: identidade visual do navegador.
-- `assets/css/07-experience.css`: acabamento visual, responsividade, densidade e acessibilidade.
-- `assets/js/presentation/experience.js`: resumo contextual, filtros ativos e preferências de interface.
+- `assets/css/07-experience.css`: filtros ativos, acessibilidade e recursos essenciais de navegação.
+- `assets/css/08-polish.css`: guia rápido moderno, cores funcionais dos ícones e tooltips.
+- `assets/css/09-v180.css`: agrupamento dos cards, pendências em colunas, Guia Rápido wide e animações no hover.
+- `assets/css/06-calendar.css`: calendários mensais expansíveis e layout centralizado.
+- `assets/js/presentation/experience.js`: preferências essenciais e filtros ativos.
+- `assets/js/presentation/renderers.js`: renderização e controle dos expanders do calendário.

@@ -1,12 +1,12 @@
 /**
  * experience.js
- * Preferências de interface, resumo contextual, filtros ativos e atalhos visuais.
+ * Preferências essenciais da interface, filtros ativos e atalhos visuais.
  * Carregado como script clássico para manter compatibilidade com abertura via file://.
  */
 
 "use strict";
 
-const UI_PREFERENCES_KEY = "batidasImparesUiV1";
+const UI_PREFERENCES_KEY = "batidasImparesUiV2";
 
 function readUiPreferences() {
   try {
@@ -24,10 +24,8 @@ function saveUiPreferences() {
   });
   const preferences = {
     view: state.view,
-    density: document.body.classList.contains("density-compact")
-      ? "compact"
-      : "comfortable",
     pageSize: $("#pageSize")?.value || "50",
+    cardGrouping: state.cardGrouping,
     accordions,
   };
   localStorage.setItem(UI_PREFERENCES_KEY, JSON.stringify(preferences));
@@ -41,41 +39,16 @@ function updateViewControls() {
   });
 }
 
-function updateDensityControl() {
-  const compact = document.body.classList.contains("density-compact"),
-    button = $("#densityBtn");
-  if (!button) return;
-  button.setAttribute("aria-pressed", String(compact));
-  button.title = compact
-    ? "Usar espaçamento confortável"
-    : "Usar visualização compacta";
-}
-
-function updateSectionsControl() {
-  const button = $("#toggleSectionsBtn");
-  if (!button) return;
-  const hasCollapsed = $$('[data-accordion]').some(
-    (item) => item.getAttribute("aria-expanded") !== "true",
-  );
-  const label = button.querySelector("span");
-  if (label) label.textContent = hasCollapsed ? "Expandir" : "Recolher";
-  button.title = hasCollapsed
-    ? "Expandir todas as seções"
-    : "Recolher todas as seções";
-}
-
 function restoreUiPreferences() {
   const preferences = readUiPreferences();
   if (["table", "cards", "calendar"].includes(preferences.view))
     state.view = preferences.view;
 
-  document.body.classList.toggle(
-    "density-compact",
-    preferences.density === "compact",
-  );
-
   if (preferences.pageSize && $("#pageSize"))
     $("#pageSize").value = String(preferences.pageSize);
+
+  if (["employee", "department"].includes(preferences.cardGrouping))
+    state.cardGrouping = preferences.cardGrouping;
 
   if (preferences.accordions) {
     $$('[data-accordion]').forEach((button) => {
@@ -89,8 +62,6 @@ function restoreUiPreferences() {
   }
 
   updateViewControls();
-  updateDensityControl();
-  updateSectionsControl();
 }
 
 function activeFilterDescriptors() {
@@ -154,6 +125,11 @@ function renderActiveFilters() {
     chips = $("#activeFilterChips");
   if (!shell || !chips) return;
   shell.hidden = !filters.length;
+  const contextualClearButton = $("#resultsClearFiltersBtn");
+  if (contextualClearButton) {
+    contextualClearButton.disabled = !filters.length;
+    contextualClearButton.classList.toggle("is-disabled", !filters.length);
+  }
   $("#activeFilterCount").textContent = filters.length;
   chips.innerHTML = filters
     .map(
@@ -164,28 +140,8 @@ function renderActiveFilters() {
 }
 
 function renderExperienceSummary() {
-  const file = state.fileName || "Nenhum arquivo",
-    rows = state.filtered.length ? state.filtered : state.raw,
-    employees = new Set(state.filtered.map((record) => employeeKey(record)))
-      .size;
-
-  if ($("#contextFileName")) {
-    $("#contextFileName").textContent = file;
-    $("#contextFileName").title = file;
-  }
-  if ($("#contextPeriod"))
-    $("#contextPeriod").textContent = dateRangeText(rows);
-  if ($("#contextRecords"))
-    $("#contextRecords").textContent = state.filtered.length.toLocaleString(
-      "pt-BR",
-    );
-  if ($("#contextEmployees"))
-    $("#contextEmployees").textContent = employees.toLocaleString("pt-BR");
-
   renderActiveFilters();
   updateViewControls();
-  updateDensityControl();
-  updateSectionsControl();
 }
 
 function removeActiveFilter(key) {
@@ -210,49 +166,14 @@ function removeActiveFilter(key) {
   applyFilters();
 }
 
-function toggleAllAccordions() {
-  const buttons = $$('[data-accordion]'),
-    shouldOpen = buttons.some(
-      (button) => button.getAttribute("aria-expanded") !== "true",
-    );
-  buttons.forEach((button) => {
-    const target = $("#" + button.dataset.accordion);
-    button.setAttribute("aria-expanded", String(shouldOpen));
-    if (target) target.hidden = !shouldOpen;
-  });
-  updateSectionsControl();
-  saveUiPreferences();
-}
-
-function openGlobalSearch() {
-  const analysis = $('[data-accordion="analysisBody"]');
-  if (analysis && analysis.getAttribute("aria-expanded") !== "true")
-    toggleAccordion(analysis);
-  openCompactSearch();
-}
-
-function toggleDensity() {
-  document.body.classList.toggle("density-compact");
-  updateDensityControl();
-  saveUiPreferences();
-  toast(
-    "Densidade alterada",
-    document.body.classList.contains("density-compact")
-      ? "Visualização compacta ativada."
-      : "Espaçamento confortável restaurado.",
-  );
-}
-
 function updateScrollTopButton() {
   const button = $("#scrollTopBtn");
   if (button) button.classList.toggle("show", window.scrollY > 420);
 }
 
 function bindExperienceControls() {
-  $("#quickSearchBtn")?.addEventListener("click", openGlobalSearch);
-  $("#toggleSectionsBtn")?.addEventListener("click", toggleAllAccordions);
-  $("#densityBtn")?.addEventListener("click", toggleDensity);
   $("#clearActiveFiltersBtn")?.addEventListener("click", resetFilters);
+  $("#resultsClearFiltersBtn")?.addEventListener("click", resetFilters);
   $("#emptyImportBtn")?.addEventListener("click", () =>
     $("#fileInput").click(),
   );

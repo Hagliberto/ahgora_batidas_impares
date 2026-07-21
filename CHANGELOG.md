@@ -2,6 +2,41 @@
 
 Todas as mudanças relevantes deste projeto são registradas neste arquivo.
 
+## [1.8.0] — 21/07/2026
+
+### Alterado
+
+- reorganização das pendências de cada empregado em colunas compactas dentro dos cards;
+- remoção das localizações da aba Cards para reduzir ruído visual;
+- inclusão de alternância entre agrupamento por empregado e agrupamento por departamento;
+- inclusão de botão com ícone para limpar os filtros diretamente no expander de visualização;
+- ampliação do Guia Rápido para formato wide, com animações vetoriais no hover;
+- padronização brasileira de data e hora nos relatórios e nos nomes dos arquivos exportados.
+
+### Adicionado
+
+- seções de departamento com contagem de empregados e pendências;
+- persistência da preferência de agrupamento dos cards;
+- folha de estilo `09-v180.css` para os novos componentes e animações.
+
+## [1.7.0] — 20/07/2026
+
+### Simplificado
+
+- removidos da appbar os controles redundantes de pesquisa, expansão conjunta das seções e densidade;
+- removida a faixa superior de quatro cards de contexto por repetir informações já disponíveis no painel;
+- appbar reduzida às ações essenciais de guia, importação, exportação, limpeza e tela cheia.
+
+### Melhorado
+
+- guia rápido totalmente redesenhado com hierarquia tipográfica moderna, hero visual, cards coloridos e ícones vetoriais;
+- ícones da appbar, seções, modos de visualização e exportações receberam cores funcionais próprias;
+- cada mês do calendário passou a funcionar como expander independente;
+- quando apenas um mês está aberto, o calendário é centralizado e ocupa uma área maior;
+- adicionados controles para abrir ou recolher os dois calendários;
+- dias, pendências, legendas e controles receberam tooltips detalhados;
+- estado aberto ou fechado de cada mês é preservado localmente.
+
 ## [1.6.0] — 20/07/2026
 
 ### Adicionado
