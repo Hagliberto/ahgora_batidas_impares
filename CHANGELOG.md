@@ -2,6 +2,20 @@
 
 Todas as mudanças relevantes deste projeto são registradas neste arquivo.
 
+## [1.8.2] — 21/07/2026
+
+### Corrigido
+
+- validação sintática dos módulos JavaScript reescrita em Node.js puro, sem dependência dos comandos Unix `find`, `sort` e `xargs`;
+- comando `npm run check:js` compatível com PowerShell, Prompt de Comando, Linux e macOS;
+- relatório de validação corrigido para diferenciar testes automatizados da checagem sintática executada.
+
+### Adicionado
+
+- script multiplataforma `scripts/check-js.js`, com descoberta recursiva e validação individual dos arquivos;
+- script `scripts/publish-v1.8.2.ps1` para publicação robusta como hotfix, com testes e push atômico;
+- arquivo `.gitattributes` para normalizar finais de linha e reduzir avisos de CRLF/LF no Git.
+
 ## [1.8.1] — 21/07/2026
 
 ### Corrigido

@@ -2,7 +2,7 @@
 
 - **Status:** Aceito
 - **Data:** 20/07/2026
-- **Versão:** 1.8.1
+- **Versão:** 1.8.2
 
 ## Contexto
 

@@ -9,7 +9,10 @@
 | `CHANGELOG.md` | Histórico de versões |
 | `CONTRIBUTING.md` | Convenções de manutenção |
 | `.editorconfig` | Padronização básica dos editores |
+| `.gitattributes` | Normalização de finais de linha e arquivos binários |
 | `.gitignore` | Arquivos que não devem entrar no repositório |
+| `scripts/check-js.js` | Validação sintática multiplataforma dos módulos JavaScript |
+| `scripts/publish-v1.8.2.ps1` | Publicação robusta do hotfix com testes e push atômico |
 
 ## CSS
 
@@ -53,3 +56,8 @@ A ordem dos `<script>` em `index.html` é parte do contrato do projeto. `app.js`
 - `assets/css/06-calendar.css`: calendários mensais expansíveis e layout centralizado.
 - `assets/js/presentation/experience.js`: preferências essenciais e filtros ativos.
 - `assets/js/presentation/renderers.js`: renderização e controle dos expanders do calendário.
+
+
+## Validação multiplataforma
+
+O comando `npm run check:js` executa `scripts/check-js.js`, que percorre recursivamente `assets/js` usando apenas APIs nativas do Node.js. Isso evita dependência de utilitários específicos de Linux e permite executar a mesma validação no PowerShell, Prompt de Comando, Linux, macOS e integração contínua.

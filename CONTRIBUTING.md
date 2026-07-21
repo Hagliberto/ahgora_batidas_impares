@@ -37,6 +37,17 @@ refactor(export): separa gerador de XLSX
 docs(architecture): registra decisão técnica
 ```
 
+## Validação local
+
+Antes de criar um commit ou pull request, execute:
+
+```bash
+npm test
+npm run check:js
+```
+
+Os dois comandos utilizam apenas recursos nativos do Node.js e funcionam no Windows, Linux e macOS.
+
 ## Checklist de pull request
 
 - [ ] Funcionalidade testada com a amostra.
@@ -44,4 +55,6 @@ docs(architecture): registra decisão técnica
 - [ ] Exportações continuam abrindo.
 - [ ] Não foram adicionadas chamadas de rede.
 - [ ] Documentação foi atualizada.
+- [ ] `npm test` foi executado sem falhas.
+- [ ] `npm run check:js` foi executado sem falhas.
 - [ ] Versão e changelog foram revisados.

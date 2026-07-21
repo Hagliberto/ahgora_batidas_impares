@@ -54,6 +54,9 @@ Não é necessário instalar pacotes ou iniciar servidor.
 │       ├── infrastructure/
 │       ├── presentation/
 │       └── shared/
+├── scripts/
+│   ├── check-js.js
+│   └── publish-v1.8.2.ps1
 ├── docs/
 │   ├── architecture/
 │   ├── reference/
@@ -64,6 +67,27 @@ Não é necessário instalar pacotes ou iniciar servidor.
 ```
 
 A explicação completa das dependências e responsabilidades está em [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md).
+
+## Validação técnica
+
+Com Node.js 18 ou superior:
+
+```bash
+npm test
+npm run check:js
+```
+
+O validador JavaScript utiliza apenas APIs nativas do Node.js e funciona no Windows, Linux e macOS.
+
+## Publicação da v1.8.2
+
+Depois de extrair o pacote sobre o repositório e permanecer na branch `dev`, execute no PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\publish-v1.8.2.ps1
+```
+
+O script valida a versão, executa os testes, cria o hotfix a partir da `main`, integra em `main` e `dev`, cria a tag anotada e publica todas as referências em um único push atômico.
 
 ## Compatibilidade
 
@@ -82,4 +106,4 @@ O projeto usa scripts clássicos externos, em ordem explícita, para continuar f
 
 ## Versão
 
-**v1.8.1**
+**v1.8.2**

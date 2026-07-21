@@ -1,22 +1,22 @@
-# Relatório de Validação — v1.8.1
+# Relatório de Validação — v1.8.2
 
 Data: 21/07/2026
 
 ## Resultado
 
-- Testes automatizados: **10 aprovados, 0 falhas**.
-- Validação sintática JavaScript: **aprovada** em todos os módulos.
-- Referências locais no HTML: **26 verificadas, 0 ausentes**.
-- Identificadores HTML: **72 IDs únicos, 0 duplicidades**.
-- Cards: **agrupamento por empregado e departamento validado**.
-- Pendências nos cards: **organizadas em colunas e sem localização nessa visão**.
-- Limpeza contextual: **botão no expander de visualização integrado aos filtros ativos**.
-- Tooltip da limpeza contextual: **reposicionado para abrir abaixo do botão, sem sobrepor o expander anterior**.
-- Guia Rápido: **formato wide e animações vetoriais no hover implementados**.
-- Exportações: **datas e horas em padrão brasileiro e nomes de arquivo compatíveis com Windows**.
+- Testes automatizados: **11 aprovados, 0 falhas**.
+- Validação sintática JavaScript: **14 módulos aprovados, 0 falhas**.
+- Validador sintático: **reescrito em Node.js puro e sem dependência de `find`, `sort` ou `xargs`**.
+- Compatibilidade do comando `npm run check:js`: **adequado para PowerShell, Prompt de Comando, Linux e macOS**.
+- Referências locais no HTML: **mantidas e verificadas pelos testes estruturais**.
+- Cards: **agrupamento por empregado e departamento preservado**.
+- Tooltip da limpeza contextual: **correção da v1.8.1 preservada**.
+- Guia Rápido: **formato wide e animações vetoriais preservados**.
+- Exportações: **datas e horas no padrão brasileiro preservadas**.
 - Favicon SVG: **presente e referenciado no documento**.
 - Documentação arquitetural obrigatória: **presente**.
-- Total de arquivos no projeto: **51**.
+- Normalização de finais de linha: **configurada por `.gitattributes`**.
+- Total de arquivos no projeto: **54**.
 
 ## Comandos executados
 
@@ -25,8 +25,10 @@ npm test
 npm run check:js
 ```
 
-Também foram verificadas programaticamente a existência dos arquivos locais referenciados, a ausência de IDs duplicados e a presença dos novos controles e agrupamentos.
+## Resultado do validador multiplataforma
 
-## Limitação do ambiente de validação
+O script `scripts/check-js.js` percorreu recursivamente `assets/js` e executou `node --check` individualmente em 14 arquivos. O comando não utiliza shell Unix, expansão de glob do sistema operacional ou ferramentas externas.
 
-A execução automatizada em Chromium não concluiu devido às restrições administrativas do ambiente. A validação final utilizou testes automatizados, análise sintática dos módulos, inspeção estrutural do HTML e conferência de integridade do pacote. Essa limitação não altera a execução normal do projeto em Chrome, Edge ou Firefox no computador do usuário.
+## Observação de compatibilidade
+
+A implementação utiliza apenas APIs nativas do Node.js (`fs`, `path` e `child_process`) e invoca o próprio executável do Node por `process.execPath`. Dessa forma, não depende do shell disponível no computador e pode ser executada pelo npm em Windows, Linux e macOS.
