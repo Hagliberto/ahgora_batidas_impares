@@ -17,9 +17,11 @@ test("index referencia somente assets locais existentes", () => {
     ...html.matchAll(/<(?:link|script)\b[^>]+(?:href|src)="([^"]+)"/g),
   ].map((match) => match[1]);
 
-  assert.ok(references.length >= 20);
+  assert.ok(references.length >= 21);
   assert.ok(references.includes("assets/icons/favicon.svg"));
   assert.ok(references.includes("assets/css/07-experience.css"));
+  assert.ok(references.includes("assets/css/08-polish.css"));
+  assert.ok(references.includes("assets/css/09-v180.css"));
   assert.ok(references.includes("assets/js/presentation/experience.js"));
   for (const reference of references) {
     assert.equal(
@@ -95,21 +97,52 @@ test("cards agrupados e legenda do calendário estão implementados", () => {
 });
 
 
-test("favicon e melhorias de experiência estão integrados", () => {
+test("favicon e experiência simplificada estão integrados", () => {
   const html = read("index.html");
   const experience = read("assets/js/presentation/experience.js");
-  const css = read("assets/css/07-experience.css");
+  const polish = read("assets/css/08-polish.css");
+  const renderers = read("assets/js/presentation/renderers.js");
   const manifest = JSON.parse(read("project.manifest.json"));
 
   assert.match(html, /assets\/icons\/favicon\.svg/);
-  assert.match(html, /id="contextStrip"/);
   assert.match(html, /id="activeFilterShell"/);
-  assert.match(html, /id="densityBtn"/);
   assert.match(html, /id="scrollTopBtn"/);
+  assert.match(html, /class="welcome-paper welcome-modern"/);
+  assert.doesNotMatch(html, /id="contextStrip"/);
+  assert.doesNotMatch(html, /id="quickSearchBtn"/);
+  assert.doesNotMatch(html, /id="toggleSectionsBtn"/);
+  assert.doesNotMatch(html, /id="densityBtn"/);
   assert.match(experience, /function renderExperienceSummary/);
   assert.match(experience, /function renderActiveFilters/);
   assert.match(experience, /function restoreUiPreferences/);
-  assert.match(css, /\.context-strip/);
-  assert.match(css, /\.active-filter-shell/);
-  assert.equal(manifest.version, "1.6.0");
+  assert.match(renderers, /calendar-month-expander/);
+  assert.match(renderers, /calendar-layout-single/);
+  assert.match(renderers, /data-tooltip/);
+  assert.match(polish, /#exportMenuBtn/);
+  assert.match(polish, /\.welcome-hero/);
+  assert.match(polish, /\.has-tooltip/);
+  assert.equal(manifest.version, "1.8.0");
+});
+
+
+test("cards por empregado e departamento, guia wide e exportação brasileira estão integrados", () => {
+  const html = read("index.html");
+  const renderers = read("assets/js/presentation/renderers.js");
+  const experience = read("assets/js/presentation/experience.js");
+  const helpers = read("assets/js/shared/ui-helpers.js");
+  const xlsx = read("assets/js/infrastructure/export/export-core-xlsx.js");
+  const css = read("assets/css/09-v180.css");
+
+  assert.match(html, /id="resultsClearFiltersBtn"/);
+  assert.match(renderers, /function groupRecordsByDepartment/);
+  assert.match(renderers, /data-card-grouping="employee"/);
+  assert.match(renderers, /data-card-grouping="department"/);
+  assert.match(renderers, /employee-occurrence-list column-layout/);
+  assert.doesNotMatch(renderers, /occurrence-location/);
+  assert.match(experience, /resultsClearFiltersBtn/);
+  assert.match(helpers, /function formatDateTimeBr/);
+  assert.match(helpers, /String\(d\.getDate\(\)\).*String\(d\.getMonth\(\) \+ 1\)/s);
+  assert.match(xlsx, /formatDateTimeBr\(\)/);
+  assert.match(css, /\.welcome-paper\.welcome-modern/);
+  assert.match(css, /guide-icon-draw/);
 });

@@ -20,6 +20,7 @@ const state = {
   quickStatus: "",
   statFilter: null,
   selectedEmployees: new Set(),
+  cardGrouping: "employee",
 };
 const fieldAliases = {
   matricula: [
