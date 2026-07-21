@@ -9,7 +9,7 @@ npm test
 npm run check:js
 ```
 
-Os testes usam apenas recursos nativos do Node.js e não instalam dependências.
+Os testes usam apenas recursos nativos do Node.js e não instalam dependências. O comando `npm run check:js` é multiplataforma e funciona no Windows, Linux e macOS.
 
 ## Verificações mínimas antes de publicar
 
@@ -63,13 +63,14 @@ Testar os arquivos em `exemplos/`:
 4. Use **Limpar dados**.
 5. Recarregue novamente e confirme que a importação não foi restaurada.
 
-## Verificações técnicas realizadas na v1.8.1
+## Verificações técnicas realizadas na v1.8.2
 
-- validação sintática de todos os arquivos JavaScript com `node --check`;
+- validação sintática de 14 arquivos JavaScript com o validador multiplataforma `scripts/check-js.js`;
+- validação do comando `npm run check:js` sem dependências Unix;
 - conferência de referências locais no `index.html`;
 - conferência de abertura e integridade do ZIP;
 - comparação do conteúdo funcional extraído do arquivo original.
-- execução de 9 testes automatizados sem falhas;
+- execução de 11 testes automatizados sem falhas;
 - validação dos agrupamentos por empregado e departamento;
 - validação do botão contextual de limpeza de filtros;
 - validação do padrão brasileiro de data e hora nas exportações;

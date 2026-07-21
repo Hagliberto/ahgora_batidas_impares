@@ -1,6 +1,6 @@
 {
   "name": "Ahgora — Batidas Ímpares",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "entry": "index.html",
   "runtime": "browser/file",
   "dependencies": [],

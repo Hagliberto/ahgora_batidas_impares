@@ -121,7 +121,7 @@ test("favicon e experiência simplificada estão integrados", () => {
   assert.match(polish, /#exportMenuBtn/);
   assert.match(polish, /\.welcome-hero/);
   assert.match(polish, /\.has-tooltip/);
-  assert.equal(manifest.version, "1.8.1");
+  assert.equal(manifest.version, "1.8.2");
 });
 
 
@@ -156,4 +156,18 @@ test("tooltip de limpeza abre para baixo sem sobrepor o expander anterior", () =
   assert.match(css, /results-clear-filter\.has-tooltip::after/);
   assert.match(css, /top:\s*calc\(100% \+ 8px\)/);
   assert.match(css, /bottom:\s*auto/);
+});
+
+
+test("validador JavaScript é multiplataforma e não depende de utilitários Unix", () => {
+  const packageJson = JSON.parse(read("package.json"));
+  const validator = read("scripts/check-js.js");
+
+  assert.equal(packageJson.scripts["check:js"], "node scripts/check-js.js");
+  assert.ok(validator.includes("spawnSync(process.execPath"));
+  assert.match(validator, /collectJavaScriptFiles/);
+  assert.match(validator, /windowsHide:\s*true/);
+  assert.doesNotMatch(packageJson.scripts["check:js"], /(?:^|\s)(?:find|xargs|sort)(?:\s|$)/);
+  assert.equal(fs.existsSync(path.join(ROOT, ".gitattributes")), true);
+  assert.equal(fs.existsSync(path.join(ROOT, "scripts/publish-v1.8.2.ps1")), true);
 });
