@@ -13,15 +13,20 @@ O projeto funciona diretamente no navegador, sem servidor, banco de dados ou dep
 - Filtros por colaborador, status, departamento e período.
 - Seleção de múltiplos colaboradores.
 - Cards e indicadores interativos.
-- Visualização em tabela, cards agrupados por empregado e calendário operacional 21 → 20.
+- Visualização em tabela, cards agrupados por empregado ou departamento e calendário operacional 21 → 20.
 - Exportação para PDF, PNG e XLSX.
 - Persistência local da última importação e das preferências de interface.
 - Atalhos de teclado: `/` abre a busca e `Esc` limpa os filtros.
 - Favicon vetorial próprio, compatível com abertura local.
-- Barra de contexto com arquivo, período, registros e empregados do recorte.
 - Filtros ativos removíveis individualmente.
-- Densidade compacta ou confortável.
-- Expansão e recolhimento conjunto das seções.
+- Appbar simplificada, com somente as ações essenciais.
+- Ícones funcionais com cores próprias para facilitar a identificação.
+- Calendários mensais independentes, expansíveis e centralizados quando abertos isoladamente.
+- Tooltips detalhados nos dias, pendências, legendas e controles do calendário.
+- Guia rápido em formato wide, com cards coloridos, hierarquia tipográfica moderna e ícones vetoriais animados no hover.
+- Pendências organizadas em colunas dentro de cada card, sem exibir localizações nessa visão.
+- Botão contextual para limpar os filtros diretamente no expander de visualização.
+- Datas e horas das exportações padronizadas em português do Brasil.
 - Botão flutuante para retorno ao topo.
 - Processamento integralmente local no navegador.
 
@@ -77,4 +82,4 @@ O projeto usa scripts clássicos externos, em ordem explícita, para continuar f
 
 ## Versão
 
-**v1.6.0**
+**v1.8.0**

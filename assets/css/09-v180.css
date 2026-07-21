@@ -1,0 +1,396 @@
+/*
+ * 09-v180.css
+ * Agrupamentos dos cards, limpeza contextual e evolução wide do Guia Rápido.
+ * Projeto: Ahgora — Batidas Ímpares v1.8.0
+ */
+
+.results-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.results-clear-filter {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffd1d4;
+  border-radius: 9px;
+  background: #fff5f5;
+  color: #b4233a;
+  transition: 0.18s ease;
+}
+
+.results-clear-filter:hover {
+  color: #fff;
+  background: #b4233a;
+  border-color: #b4233a;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(180, 35, 58, 0.2);
+}
+
+.results-clear-filter svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cards-toolbar.enhanced {
+  align-items: flex-end;
+  border: 1px solid #dfe7f3;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #fbfdff 0%, #f5f8ff 100%);
+  padding: 11px 12px;
+  margin-bottom: 12px;
+}
+
+.cards-grouping-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #d8e2f1;
+  border-radius: 10px;
+  background: #eef3f9;
+}
+
+.cards-grouping-switch button {
+  min-height: 31px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 7px;
+  padding: 6px 10px;
+  background: transparent;
+  color: #667085;
+  font-size: 9.5px;
+  font-weight: 900;
+  transition: 0.16s ease;
+}
+
+.cards-grouping-switch button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cards-grouping-switch button.active {
+  color: #174ea6;
+  background: #fff;
+  box-shadow: 0 2px 7px rgba(31, 50, 81, 0.12);
+}
+
+.employee-occurrence-list.column-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 8px;
+  padding: 9px;
+  border-top: 1px solid #e6ebf2;
+  background: #f8faff;
+}
+
+.employee-occurrence-column {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+  align-content: start;
+  border: 1px solid #dfe6f1;
+  border-radius: 11px;
+  background: #fff;
+  padding: 9px;
+  box-shadow: 0 3px 9px rgba(31, 50, 81, 0.04);
+  overflow: hidden;
+  transition: 0.16s ease;
+}
+
+.employee-occurrence-column::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: #b54708;
+}
+
+.employee-occurrence-column.status-card-employee::before {
+  background: var(--cyan);
+}
+
+.employee-occurrence-column.status-card-manager::before {
+  background: var(--red);
+}
+
+.employee-occurrence-column:hover {
+  transform: translateY(-2px);
+  border-color: #cbd9ee;
+  box-shadow: 0 9px 18px rgba(31, 50, 81, 0.1);
+}
+
+.occurrence-column-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.occurrence-column-head .occurrence-date-pill {
+  min-width: 0;
+  flex: 1;
+}
+
+.occurrence-column-status {
+  display: flex;
+  align-items: flex-start;
+  min-height: 27px;
+}
+
+.occurrence-column-status .status-pill {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.employee-occurrence-column .occurrence-detail-btn {
+  flex: 0 0 auto;
+}
+
+.department-groups-list {
+  display: grid;
+  gap: 14px;
+}
+
+.department-card-group {
+  border: 1px solid #d9e4f1;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #f7fbff 0%, #fff 35%);
+  box-shadow: 0 6px 18px rgba(31, 50, 81, 0.06);
+  overflow: hidden;
+}
+
+.department-group-head {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 15px;
+  border-bottom: 1px solid #dfe7f3;
+  background: rgba(240, 247, 255, 0.76);
+}
+
+.department-group-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #067647;
+  background: #eafaf2;
+  border: 1px solid #c9ecd9;
+}
+
+.department-group-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.department-group-copy {
+  min-width: 0;
+}
+
+.department-group-copy > span {
+  display: inline-flex;
+  color: #067647;
+  font-size: 8.5px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.department-group-copy h3 {
+  margin: 2px 0 0;
+  color: #243247;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.department-group-copy p {
+  margin: 3px 0 0;
+  color: #667085;
+  font-size: 9.5px;
+}
+
+.department-employees-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(360px, 1fr));
+  gap: 11px;
+  padding: 12px;
+}
+
+.employee-record-card.inside-department {
+  background: #fff;
+}
+
+.employee-record-card.inside-department .employee-card-filter-row {
+  padding-bottom: 2px;
+}
+
+/* Guia Rápido realmente wide */
+.welcome-screen {
+  padding: 14px 14px 72px;
+}
+
+.welcome-paper.welcome-modern {
+  width: min(1720px, calc(100vw - 28px));
+  max-width: none;
+  padding: 22px 28px 24px;
+}
+
+.welcome-hero {
+  grid-template-columns: minmax(0, 1.65fr) minmax(360px, 0.65fr);
+  padding-block: 22px;
+}
+
+.welcome-steps.modern-steps {
+  grid-template-columns: repeat(6, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.welcome-steps.modern-steps .welcome-step {
+  min-height: 166px;
+}
+
+.welcome-step-icon,
+.welcome-product-mark,
+.hero-main-icon,
+.welcome-info-icon,
+.welcome-hero-pills svg {
+  transform-origin: center;
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.28s ease,
+    filter 0.28s ease;
+}
+
+.welcome-step:hover .welcome-step-icon {
+  transform: translateY(-5px) rotate(-5deg) scale(1.1);
+  box-shadow: 0 10px 22px rgba(31, 50, 81, 0.16);
+}
+
+.welcome-step:hover .welcome-step-icon svg {
+  animation: guide-icon-draw 0.72s ease both;
+}
+
+.welcome-product:hover .welcome-product-mark {
+  transform: rotate(-7deg) scale(1.08);
+  box-shadow: 0 16px 30px rgba(23, 78, 166, 0.3);
+}
+
+.welcome-hero-art:hover .hero-main-icon {
+  transform: rotate(3deg) scale(1.06);
+  filter: saturate(1.12);
+}
+
+.welcome-info:hover .welcome-info-icon {
+  transform: translateY(-4px) rotate(4deg) scale(1.07);
+}
+
+.welcome-hero-pills span:hover svg {
+  transform: rotate(-8deg) scale(1.16);
+}
+
+@keyframes guide-icon-draw {
+  0% {
+    stroke-dasharray: 5 24;
+    stroke-dashoffset: 16;
+  }
+  55% {
+    stroke-dasharray: 18 8;
+    stroke-dashoffset: 3;
+  }
+  100% {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (max-width: 1350px) {
+  .welcome-steps.modern-steps {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+  }
+  .department-employees-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .welcome-paper.welcome-modern {
+    width: 100%;
+    padding: 18px 15px;
+  }
+  .welcome-hero {
+    grid-template-columns: 1fr;
+  }
+  .welcome-steps.modern-steps {
+    grid-template-columns: repeat(2, minmax(170px, 1fr));
+  }
+  .cards-toolbar.enhanced,
+  .department-group-head {
+    align-items: stretch;
+  }
+  .department-group-head {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+  .department-group-head .dept-filter {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 620px) {
+  .welcome-steps.modern-steps,
+  .employee-occurrence-list.column-layout {
+    grid-template-columns: 1fr;
+  }
+  .cards-grouping-switch {
+    width: 100%;
+  }
+  .cards-grouping-switch button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-step:hover .welcome-step-icon svg {
+    animation: none;
+  }
+  .welcome-step-icon,
+  .welcome-product-mark,
+  .hero-main-icon,
+  .welcome-info-icon,
+  .welcome-hero-pills svg {
+    transition: none;
+  }
+}
+
+.results-clear-filter:disabled,
+.results-clear-filter.is-disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

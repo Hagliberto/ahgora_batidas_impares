@@ -132,7 +132,7 @@ function buildPdf() {
     for (const r of part) {
       x = 18;
       const vals = [
-          r.dia,
+          r.dateObj ? formatDate(r.dateObj) : r.dia,
           r.matricula,
           r.nome,
           r.status,
@@ -180,7 +180,7 @@ function buildPdf() {
     text(
       18,
       22,
-      "Gerado localmente pela Visão consolidada das batidas ímpares.",
+      `Gerado localmente em ${formatDateTimeBr()} pela Visão consolidada das batidas ímpares.`,
       6.5,
       false,
       "#7b8798",

@@ -33,7 +33,7 @@ async function exportPng() {
       ctx.fillStyle = "#667085";
       ctx.font = "14px Arial";
       ctx.fillText(
-        `${state.filtered.length} ocorrência(s) • ${dateRangeText(state.filtered)} • ${state.fileName}`,
+        `${state.filtered.length} ocorrência(s) • ${dateRangeText(state.filtered)} • Gerado em ${formatDateTimeBr()} • ${state.fileName}`,
         34,
         66,
       );
@@ -98,7 +98,7 @@ async function exportPng() {
       for (const r of rows) {
         x = 34;
         const vals = [
-            r.dia,
+            r.dateObj ? formatDate(r.dateObj) : r.dia,
             r.matricula,
             r.nome,
             r.status,
@@ -144,7 +144,7 @@ async function exportPng() {
       ctx.fillStyle = "#7b8798";
       ctx.font = "11px Arial";
       ctx.fillText(
-        "Gerado localmente • Colunas e status diferenciados por cor.",
+        `Gerado localmente em ${formatDateTimeBr()} • Colunas e status diferenciados por cor.`,
         34,
         height - 18,
       );

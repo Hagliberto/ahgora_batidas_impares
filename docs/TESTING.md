@@ -63,9 +63,15 @@ Testar os arquivos em `exemplos/`:
 4. Use **Limpar dados**.
 5. Recarregue novamente e confirme que a importação não foi restaurada.
 
-## Verificações técnicas realizadas na v1.6.0
+## Verificações técnicas realizadas na v1.8.0
 
 - validação sintática de todos os arquivos JavaScript com `node --check`;
 - conferência de referências locais no `index.html`;
 - conferência de abertura e integridade do ZIP;
 - comparação do conteúdo funcional extraído do arquivo original.
+- execução de 9 testes automatizados sem falhas;
+- validação dos agrupamentos por empregado e departamento;
+- validação do botão contextual de limpeza de filtros;
+- validação do padrão brasileiro de data e hora nas exportações;
+- validação da folha de estilo wide e das animações vetoriais do Guia Rápido.
+
