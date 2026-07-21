@@ -2,6 +2,14 @@
 
 Todas as mudanças relevantes deste projeto são registradas neste arquivo.
 
+## [1.8.1] — 21/07/2026
+
+### Corrigido
+
+- tooltip do botão de limpar filtros no expander de Visualização reposicionado para abrir abaixo da ação;
+- eliminação da sobreposição do tooltip com o expander imediatamente anterior;
+- preservação do comportamento e do visual dos demais tooltips da aplicação.
+
 ## [1.8.0] — 21/07/2026
 
 ### Alterado

@@ -1,0 +1,42 @@
+/*
+ * 10-v181-hotfix.css
+ * Correção de posicionamento do tooltip de limpeza de filtros.
+ * Projeto: Ahgora — Batidas Ímpares v1.8.1
+ */
+
+/*
+ * O botão fica próximo ao limite superior do expander de Visualização.
+ * Por isso, somente o tooltip desta ação abre para baixo, permanecendo
+ * totalmente visível dentro da própria seção e acima dos controles abaixo.
+ */
+.results-head-actions {
+  position: relative;
+  z-index: 30;
+  overflow: visible;
+}
+
+.results-clear-filter.has-tooltip::before {
+  top: calc(100% + 3px);
+  bottom: auto;
+  left: 50%;
+  transform: translate(-50%, -5px) rotate(45deg);
+}
+
+.results-clear-filter.has-tooltip::after {
+  top: calc(100% + 8px);
+  right: 0;
+  bottom: auto;
+  left: auto;
+  transform: translateY(-5px);
+  text-align: left;
+}
+
+.results-clear-filter.has-tooltip:hover::before,
+.results-clear-filter.has-tooltip:focus-visible::before {
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+.results-clear-filter.has-tooltip:hover::after,
+.results-clear-filter.has-tooltip:focus-visible::after {
+  transform: translateY(0);
+}

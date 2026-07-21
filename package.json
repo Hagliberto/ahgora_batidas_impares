@@ -1,6 +1,6 @@
 {
   "name": "ahgora-batidas-impares",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "private": true,
   "description": "Painel local e modular para análise de batidas ímpares do TOTVS Ahgora.",
   "scripts": {

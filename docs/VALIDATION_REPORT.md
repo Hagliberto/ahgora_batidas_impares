@@ -1,21 +1,22 @@
-# Relatório de Validação — v1.8.0
+# Relatório de Validação — v1.8.1
 
 Data: 21/07/2026
 
 ## Resultado
 
-- Testes automatizados: **9 aprovados, 0 falhas**.
+- Testes automatizados: **10 aprovados, 0 falhas**.
 - Validação sintática JavaScript: **aprovada** em todos os módulos.
-- Referências locais no HTML: **25 verificadas, 0 ausentes**.
+- Referências locais no HTML: **26 verificadas, 0 ausentes**.
 - Identificadores HTML: **72 IDs únicos, 0 duplicidades**.
 - Cards: **agrupamento por empregado e departamento validado**.
 - Pendências nos cards: **organizadas em colunas e sem localização nessa visão**.
 - Limpeza contextual: **botão no expander de visualização integrado aos filtros ativos**.
+- Tooltip da limpeza contextual: **reposicionado para abrir abaixo do botão, sem sobrepor o expander anterior**.
 - Guia Rápido: **formato wide e animações vetoriais no hover implementados**.
 - Exportações: **datas e horas em padrão brasileiro e nomes de arquivo compatíveis com Windows**.
 - Favicon SVG: **presente e referenciado no documento**.
 - Documentação arquitetural obrigatória: **presente**.
-- Total de arquivos no projeto: **50**.
+- Total de arquivos no projeto: **51**.
 
 ## Comandos executados
 
