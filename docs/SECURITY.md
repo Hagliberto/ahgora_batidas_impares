@@ -18,4 +18,4 @@ A última importação pode ser armazenada em `localStorage`. Isso significa que
 
 ## Arquivos exportados
 
-PDF, PNG e XLSX podem conter dados pessoais e funcionais. A proteção, armazenamento e compartilhamento desses arquivos são responsabilidade do operador.
+PDF, PNG, XLSX e o pacote ZIP por departamento podem conter dados pessoais e funcionais. A proteção, armazenamento e compartilhamento desses arquivos são responsabilidade do operador.

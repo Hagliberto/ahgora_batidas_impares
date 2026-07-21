@@ -1,13 +1,13 @@
+#requires -Version 7.0
 [CmdletBinding()]
 param()
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$version = "v1.8.2"
-$versionNumber = "1.8.2"
-$hotfixBranch = "hotfix/v1.8.2-validacao-multiplataforma"
-$stashName = "hotfix-v1.8.2-validacao-multiplataforma"
+$version = "v1.10.0"
+$versionNumber = "1.10.0"
+$releaseBranch = "release/v1.10.0"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
 Set-Location $projectRoot
@@ -40,7 +40,7 @@ function Assert-Command {
     param([Parameter(Mandatory)][string]$Name)
 
     if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
-        throw "O comando '$Name' não foi encontrado no PATH."
+        throw "O comando '$Name' nao foi encontrado no PATH."
     }
 }
 
@@ -51,12 +51,14 @@ function Assert-Version {
         "project.manifest.json",
         "README.md",
         "CHANGELOG.md",
-        "scripts/check-js.js"
+        "scripts/check-js.js",
+        "assets/css/12-v1100-ux.css",
+        "assets/js/infrastructure/export/department-zip-exporter.js"
     )
 
     foreach ($file in $requiredFiles) {
         if (-not (Test-Path $file)) {
-            throw "Arquivo obrigatório não encontrado: $file"
+            throw "Arquivo obrigatorio nao encontrado: $file"
         }
     }
 
@@ -67,60 +69,64 @@ function Assert-Version {
     $changelog = Get-Content "CHANGELOG.md" -Raw
 
     if ($package.version -ne $versionNumber) {
-        throw "package.json está em '$($package.version)', esperado '$versionNumber'."
+        throw "package.json esta em '$($package.version)', esperado '$versionNumber'."
     }
 
     if ($package.scripts.'check:js' -ne "node scripts/check-js.js") {
-        throw "O script check:js do package.json não está configurado para o validador multiplataforma."
+        throw "O script check:js nao usa o validador multiplataforma."
     }
 
     if ($manifest.version -ne $versionNumber) {
-        throw "project.manifest.json está em '$($manifest.version)', esperado '$versionNumber'."
+        throw "project.manifest.json esta em '$($manifest.version)', esperado '$versionNumber'."
     }
 
-    if ($index -notmatch 'content=["'']1\.8\.2["'']') {
-        throw "A metatag da versão 1.8.2 não foi encontrada no index.html."
+    if ($index -notmatch 'content=["'']1\.10\.0["'']') {
+        throw "A metatag da versao 1.10.0 nao foi encontrada no index.html."
     }
 
-    if ($index -notmatch 'v1\.8\.2') {
-        throw "A identificação visual v1.8.2 não foi encontrada no index.html."
+    if ($index -notmatch 'v1\.10\.0') {
+        throw "A identificacao visual v1.10.0 nao foi encontrada no index.html."
     }
 
-    if ($readme -notmatch 'v1\.8\.2') {
-        throw "A versão v1.8.2 não foi encontrada no README.md."
+    if ($readme -notmatch 'v1\.10\.0') {
+        throw "A versao v1.10.0 nao foi encontrada no README.md."
     }
 
-    if ($changelog -notmatch '\[1\.8\.2\]') {
-        throw "A seção [1.8.2] não foi encontrada no CHANGELOG.md."
+    if ($changelog -notmatch '\[1\.10\.0\]') {
+        throw "A secao [1.10.0] nao foi encontrada no CHANGELOG.md."
     }
 
-    Write-Host "Versão v1.8.2 validada." -ForegroundColor Green
+    Write-Host "Versao v1.10.0 validada." -ForegroundColor Green
 }
 
 function Assert-RefDoesNotExist {
-    & git show-ref --verify --quiet "refs/heads/$hotfixBranch"
+    & git show-ref --verify --quiet "refs/heads/$releaseBranch"
     if ($LASTEXITCODE -eq 0) {
-        throw "A branch local '$hotfixBranch' já existe."
+        throw "A branch local '$releaseBranch' ja existe."
     }
 
-    & git ls-remote --exit-code --heads origin $hotfixBranch *> $null
+    & git ls-remote --exit-code --heads origin $releaseBranch *> $null
     if ($LASTEXITCODE -eq 0) {
-        throw "A branch remota '$hotfixBranch' já existe."
+        throw "A branch remota '$releaseBranch' ja existe."
     }
 
     & git rev-parse --quiet --verify "refs/tags/$version" *> $null
     if ($LASTEXITCODE -eq 0) {
-        throw "A tag local '$version' já existe."
+        throw "A tag local '$version' ja existe."
     }
 
     & git ls-remote --exit-code --tags origin "refs/tags/$version" *> $null
     if ($LASTEXITCODE -eq 0) {
-        throw "A tag remota '$version' já existe."
+        throw "A tag remota '$version' ja existe."
     }
 }
 
 try {
-    Write-Host "Publicação robusta do Batidas Ímpares $version" -ForegroundColor Magenta
+    Write-Host "Publicacao robusta do Batidas Impares $version" -ForegroundColor Magenta
+
+    if ($PSVersionTable.PSEdition -ne "Core") {
+        throw "Execute este script com PowerShell 7: pwsh -File .\scripts\publish-v1.10.0.ps1"
+    }
 
     foreach ($command in @("git", "node", "npm")) {
         Assert-Command -Name $command
@@ -128,19 +134,18 @@ try {
 
     & git rev-parse --is-inside-work-tree *> $null
     if ($LASTEXITCODE -ne 0) {
-        throw "A pasta atual não é um repositório Git."
+        throw "A pasta atual nao e um repositorio Git."
     }
 
     $currentBranch = (& git branch --show-current).Trim()
     if ($currentBranch -ne "dev") {
-        throw "O processo deve começar na branch dev. Branch atual: '$currentBranch'."
+        throw "O processo deve comecar na branch dev. Branch atual: '$currentBranch'."
     }
 
     & git diff --cached --quiet
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "`nAlterações já adicionadas ao stage:" -ForegroundColor Yellow
         & git diff --cached --name-status
-        throw "Revise ou limpe o stage antes de continuar."
+        throw "Existem alteracoes previamente adicionadas ao stage."
     }
 
     Assert-Version
@@ -151,12 +156,16 @@ try {
     $remoteOnly = [int]$devDifference[0]
     $localOnly = [int]$devDifference[1]
 
+    if ($remoteOnly -gt 0 -and $localOnly -gt 0) {
+        throw "A dev local e a origin/dev possuem historicos divergentes ($localOnly commit(s) locais e $remoteOnly remotos). Isso ocorre quando o clone antigo e usado depois da reescrita que removeu OLD. Use o clone novo validado e extraia o pacote nele."
+    }
+
     if ($remoteOnly -gt 0) {
-        throw "A dev local está atrás da origin/dev por $remoteOnly commit(s). Atualize-a antes de continuar."
+        throw "A dev local esta atras da origin/dev por $remoteOnly commit(s). Execute git pull --ff-only antes de continuar."
     }
 
     if ($localOnly -gt 0) {
-        Write-Host "A dev possui $localOnly commit(s) local(is) ainda não publicado(s); eles serão preservados." -ForegroundColor Yellow
+        throw "A dev local possui $localOnly commit(s) ainda nao publicados. Publique ou reorganize esses commits antes de iniciar a release."
     }
 
     $candidatePaths = @(
@@ -188,22 +197,14 @@ try {
 
     $officialChanges = @(& git status --porcelain -- $projectPaths)
     if ($officialChanges.Count -eq 0) {
-        throw "Nenhuma alteração oficial da v1.8.2 foi encontrada. Extraia o pacote sobre o projeto antes de executar este script."
+        throw "Nenhuma alteracao oficial da v1.10.0 foi encontrada. Extraia o pacote sobre o projeto antes de executar."
     }
 
-    Write-Host "`nValidação antes da criação do hotfix..." -ForegroundColor Yellow
+    Write-Host "`nValidacao antes da criacao da release..." -ForegroundColor Yellow
     Invoke-Npm @("test")
     Invoke-Npm @("run", "check:js")
 
-    $stashArguments = @("stash", "push", "-u", "-m", $stashName, "--") + $projectPaths
-    Invoke-Git $stashArguments
-
-    Invoke-Git @("switch", "main")
-    Invoke-Git @("pull", "--ff-only", "origin", "main")
-    Invoke-Git @("switch", "-c", $hotfixBranch)
-    Invoke-Git @("stash", "pop", "stash@{0}")
-
-    Assert-Version
+    Invoke-Git @("switch", "-c", $releaseBranch)
 
     $addArguments = @("add", "-A", "--") + $projectPaths
     Invoke-Git $addArguments
@@ -218,15 +219,14 @@ try {
     )
 
     if ($blockedFiles.Count -gt 0) {
-        Write-Host "`nArquivos proibidos encontrados no stage:" -ForegroundColor Red
         $blockedFiles | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
         & git restore --staged -- $blockedFiles
-        throw "ZIPs, checksums ou arquivos da pasta OLD foram removidos do stage. Revise antes de tentar novamente."
+        throw "ZIPs, checksums ou arquivos OLD foram removidos do stage."
     }
 
     & git diff --cached --quiet
     if ($LASTEXITCODE -eq 0) {
-        throw "Nenhuma alteração foi adicionada ao commit da v1.8.2."
+        throw "Nenhuma alteracao foi adicionada ao commit da v1.10.0."
     }
 
     Invoke-Git @("diff", "--cached", "--check")
@@ -234,10 +234,10 @@ try {
 
     Invoke-Git @(
         "commit",
-        "-m", "fix(tooling): tornar a validação JavaScript multiplataforma",
-        "-m", "Substitui find, sort e xargs por um validador escrito em Node.js puro.",
-        "-m", "Permite executar npm run check:js no PowerShell, Prompt de Comando, Linux, macOS e integração contínua.",
-        "-m", "Adiciona normalização de finais de linha, atualiza testes, documentação, changelog e versão para v1.8.2."
+        "-m", "feat(exportacao): adicionar pacote ZIP e aprimorar a experiencia dos cards",
+        "-m", "Adiciona pacote ZIP com PDF, PNG e XLSX separados por departamento e preserva os filtros ativos.",
+        "-m", "Define a visao por departamento como padrao, inclui controle para abrir ou fechar todos os expanders e moderniza a selecao de colaboradores com toggles.",
+        "-m", "Aplica a animacao vetorial do Guia Rapido aos icones da aplicacao e atualiza acessibilidade, testes e documentacao da v1.10.0."
     )
 
     Assert-Version
@@ -246,17 +246,20 @@ try {
 
     $trackedChanges = @(& git status --porcelain --untracked-files=no)
     if ($trackedChanges.Count -gt 0) {
-        Write-Host "`nAlterações rastreadas restantes:" -ForegroundColor Yellow
         $trackedChanges | ForEach-Object { Write-Host $_ }
-        throw "A branch de hotfix não ficou limpa após o commit."
+        throw "A branch de release nao ficou limpa apos o commit."
     }
 
+    Invoke-Git @("switch", "dev")
+    Invoke-Git @("merge", "--ff-only", $releaseBranch)
+
     Invoke-Git @("switch", "main")
+    Invoke-Git @("pull", "--ff-only", "origin", "main")
     Invoke-Git @(
         "merge",
         "--no-ff",
-        $hotfixBranch,
-        "-m", "hotfix(v1.8.2): publicar validação JavaScript multiplataforma"
+        "dev",
+        "-m", "release(v1.10.0): publicar ZIP por departamento e melhorias de usabilidade"
     )
 
     Assert-Version
@@ -268,48 +271,32 @@ try {
         "-a",
         $version,
         "-m",
-        "Batidas Ímpares v1.8.2 — validação JavaScript multiplataforma e normalização de finais de linha."
+        "Batidas Impares v1.10.0 - ZIP por departamento, expanders globais, toggles animados e agrupamento departamental por padrao."
     )
 
+    # Alinha dev e main no mesmo commit para evitar sugestoes de PR sem arquivos alterados.
     Invoke-Git @("switch", "dev")
-    Invoke-Git @(
-        "merge",
-        "--no-ff",
-        $hotfixBranch,
-        "-m", "merge(hotfix): integrar correção v1.8.2 na dev"
-    )
-
-    Assert-Version
-    Invoke-Npm @("test")
-    Invoke-Npm @("run", "check:js")
+    Invoke-Git @("merge", "--ff-only", "main")
 
     Invoke-Git @(
         "push",
         "--atomic",
         "origin",
-        $hotfixBranch,
+        $releaseBranch,
         "main",
         "dev",
         $version
     )
 
     Invoke-Git @("status")
-    Invoke-Git @(
-        "log",
-        "--oneline",
-        "--decorate",
-        "--graph",
-        "--all",
-        "-n",
-        "20"
-    )
+    Invoke-Git @("log", "--oneline", "--decorate", "--graph", "--all", "-n", "20")
 
-    Write-Host "`nHotfix v1.8.2 publicado com sucesso." -ForegroundColor Green
-    Write-Host "Fluxo: $hotfixBranch -> main + dev -> tag $version" -ForegroundColor Green
+    Write-Host "`nVersao v1.10.0 publicada com sucesso." -ForegroundColor Green
+    Write-Host "main e dev terminaram alinhadas no mesmo commit." -ForegroundColor Green
 }
 catch {
-    Write-Host "`nPUBLICAÇÃO INTERROMPIDA" -ForegroundColor Red
+    Write-Host "`nPUBLICACAO INTERROMPIDA" -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Red
-    Write-Host "Nenhuma referência remota é enviada antes da etapa final de push atômico." -ForegroundColor Yellow
+    Write-Host "Nenhuma referencia remota e enviada antes do push atomico final." -ForegroundColor Yellow
     exit 1
 }

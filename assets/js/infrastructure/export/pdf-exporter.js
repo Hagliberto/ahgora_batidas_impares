@@ -82,8 +82,9 @@ function wrapChars(text, max) {
         : l,
     );
 }
-function buildPdf() {
-  const rows = state.filtered,
+function buildPdf(options = {}) {
+  const context = resolveExportOptions(options),
+    rows = context.rows,
     perPage = 15,
     pages = [];
   for (let start = 0; start < rows.length; start += perPage) {
@@ -96,11 +97,11 @@ function buildPdf() {
       text = (x, y, t, size = 7, bold = false, color = "#243247") => {
         c += `${pdfColor(color)} rg BT /F${bold ? 2 : 1} ${size} Tf ${x} ${y} Td (${pdfEsc(t)}) Tj ET\n`;
       };
-    text(18, 567, "Relatório de Batidas Ímpares", 15, true, "#174ea6");
+    text(18, 567, context.title, 15, true, "#174ea6");
     text(
       18,
       552,
-      `${rows.length} ocorrência(s) • ${dateRangeText(rows)} • Arquivo: ${state.fileName}`,
+      `${rows.length} ocorrência(s) • ${dateRangeText(rows)}${context.scopeLabel ? ` • ${context.scopeLabel}` : ""} • Arquivo: ${state.fileName}`,
       8,
       false,
       "#667085",
@@ -224,18 +225,26 @@ function buildPdf() {
   chunks.push(latinBytes(xref));
   return concatBytes(chunks);
 }
-function exportPdf() {
-  if (!ensureData()) return;
-  showLoading("Gerando PDF detalhado...");
+
+function exportPdf(options = {}) {
+  const context = resolveExportOptions(options);
+  if (!ensureData(context.rows)) return;
+  showLoading(
+    context.scopeLabel
+      ? `Gerando PDF de ${context.scopeLabel}...`
+      : "Gerando PDF detalhado...",
+  );
   setTimeout(() => {
     try {
       downloadBlob(
-        new Blob([buildPdf()], { type: "application/pdf" }),
-        `batidas_impares_detalhado_${fileStamp()}.pdf`,
+        new Blob([buildPdf(context)], { type: "application/pdf" }),
+        `${exportFileBase(context)}_${fileStamp()}.pdf`,
       );
       toast(
         "PDF gerado",
-        "Relatório em paisagem com colunas e status coloridos.",
+        context.scopeLabel
+          ? `Relatório criado somente com os dados de ${context.scopeLabel}.`
+          : "Relatório em paisagem com colunas e status coloridos.",
       );
     } catch (e) {
       toast("Erro ao gerar PDF", e.message, "error", 5000);

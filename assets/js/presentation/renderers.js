@@ -178,11 +178,15 @@ function buildCardsToolbar() {
     ].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
 
   const groupingLabel =
-    state.cardGrouping === "department"
-      ? `${totalDepartments.toLocaleString("pt-BR")} departamento(s) • ${totalEmployees.toLocaleString("pt-BR")} empregado(s)`
-      : `${totalEmployees.toLocaleString("pt-BR")} empregado(s) • ${totalOccurrences.toLocaleString("pt-BR")} pendência(s)`;
+      state.cardGrouping === "department"
+        ? `${totalDepartments.toLocaleString("pt-BR")} departamento(s) • ${totalEmployees.toLocaleString("pt-BR")} empregado(s)`
+        : `${totalEmployees.toLocaleString("pt-BR")} empregado(s) • ${totalOccurrences.toLocaleString("pt-BR")} pendência(s)`,
+    departmentToggle =
+      state.cardGrouping === "department"
+        ? `<button class="department-toggle-all has-tooltip" type="button" data-department-toggle-all aria-label="Abrir todos os departamentos" data-tooltip="Abrir todos os departamentos"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 10 4 4 4-4"/></svg><span>Abrir todos</span></button>`
+        : "";
 
-  return `<div class="cards-toolbar enhanced"><div class="cards-toolbar-copy"><strong>${state.cardGrouping === "department" ? "Visão agrupada por departamento" : "Visão agrupada por empregado"}</strong><span>${groupingLabel}. As pendências são organizadas em colunas para facilitar a conferência.</span></div><div class="cards-grouping-switch" role="group" aria-label="Agrupamento dos cards"><button type="button" data-card-grouping="employee" class="${state.cardGrouping === "employee" ? "active" : ""}" aria-pressed="${state.cardGrouping === "employee"}"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg><span>Por empregado</span></button><button type="button" data-card-grouping="department" class="${state.cardGrouping === "department" ? "active" : ""}" aria-pressed="${state.cardGrouping === "department"}"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg><span>Por departamento</span></button></div><div class="cards-toolbar-pills"><button class="record-filter-pill accent ${!state.quickStatus ? "active" : ""}" data-card-toolbar-filter="all">Todos <strong>${totalOccurrences}</strong></button>${statuses
+  return `<div class="cards-toolbar enhanced"><div class="cards-toolbar-copy"><strong>${state.cardGrouping === "department" ? "Visão agrupada por departamento" : "Visão agrupada por empregado"}</strong><span>${groupingLabel}. As pendências são organizadas em colunas para facilitar a conferência.</span></div><div class="cards-grouping-actions"><div class="cards-grouping-switch" role="group" aria-label="Agrupamento dos cards"><button type="button" data-card-grouping="employee" class="${state.cardGrouping === "employee" ? "active" : ""}" aria-pressed="${state.cardGrouping === "employee"}"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg><span>Por empregado</span></button><button type="button" data-card-grouping="department" class="${state.cardGrouping === "department" ? "active" : ""}" aria-pressed="${state.cardGrouping === "department"}"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg><span>Por departamento</span></button></div>${departmentToggle}</div><div class="cards-toolbar-pills"><button class="record-filter-pill accent ${!state.quickStatus ? "active" : ""}" data-card-toolbar-filter="all">Todos <strong>${totalOccurrences}</strong></button>${statuses
     .map((status) => {
       const count = state.filtered.filter((record) => record.status === status).length;
       return `<button class="record-filter-pill ${state.quickStatus === status ? "active" : ""}" data-card-toolbar-filter="status" data-value="${escapeHtml(status)}">${escapeHtml(status)} <strong>${count}</strong></button>`;
@@ -305,10 +309,67 @@ function renderEmployeeCard(group, options = {}) {
 function renderDepartmentGroup(group) {
   const department = departmentParts(group.departamento),
     employeeCount = group.employees.length,
-    occurrenceCount = group.records.length;
-  return `<section class="department-card-group"><header class="department-group-head"><div class="department-group-icon"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg></div><div class="department-group-copy"><span>${escapeHtml(department.code || "DEPARTAMENTO")}</span><h3>${escapeHtml(department.name || group.departamento || "Não informado")}</h3><p>${employeeCount.toLocaleString("pt-BR")} empregado(s) • ${occurrenceCount.toLocaleString("pt-BR")} pendência(s)</p></div><button class="record-filter-pill dept-filter" type="button" data-card-filter="dept" data-value="${escapeHtml(group.departamento || "")}" title="Exibir somente este departamento">Filtrar departamento</button></header><div class="department-employees-grid">${group.employees
+    occurrenceCount = group.records.length,
+    departmentName =
+      (department.code ? `${department.code} — ` : "") +
+      (department.name || group.departamento || "Não informado"),
+    departmentValue = escapeHtml(group.departamento || "");
+
+  return `<details class="department-card-group department-expander" data-department-group="${departmentValue}"><summary class="department-group-head"><div class="department-group-icon"><svg viewBox="0 0 24 24"><path d="M4 21V7l8-4 8 4v14"/><path d="M8 10h2m4 0h2M8 14h2m4 0h2M8 18h8"/></svg></div><div class="department-group-copy"><span>${escapeHtml(department.code || "DEPARTAMENTO")}</span><h3>${escapeHtml(department.name || group.departamento || "Não informado")}</h3><p>${employeeCount.toLocaleString("pt-BR")} empregado(s) • ${occurrenceCount.toLocaleString("pt-BR")} pendência(s)</p></div><div class="department-group-actions"><button class="record-filter-pill dept-filter" type="button" data-card-filter="dept" data-value="${departmentValue}" title="Exibir somente este departamento"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v5l-4 2v-7z"/></svg><span>Filtrar</span></button><div class="department-export-control"><button class="department-export-trigger" type="button" data-department-export-toggle="${departmentValue}" aria-expanded="false" title="Exportar somente os dados deste departamento"><svg class="department-export-main-icon" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M5 19h14"/></svg><span>Exportar</span><svg class="department-export-caret" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="department-export-menu" data-department-export-menu="${departmentValue}" role="menu" hidden><div class="department-export-menu-head"><strong>Exportar departamento</strong><span>${escapeHtml(departmentName)}</span><small>Os arquivos respeitam os demais filtros ativos.</small></div><button type="button" role="menuitem" data-department-export-format="pdf" data-department="${departmentValue}"><span class="department-export-format-icon pdf"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><path d="M15 2v4h4M8.5 15h7M8.5 18h5M8.5 11h7"/></svg></span><span><strong>PDF</strong><small>Relatório em paisagem</small></span></button><button type="button" role="menuitem" data-department-export-format="png" data-department="${departmentValue}"><span class="department-export-format-icon png"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 4"/></svg></span><span><strong>PNG</strong><small>Imagem detalhada</small></span></button><button type="button" role="menuitem" data-department-export-format="xlsx" data-department="${departmentValue}"><span class="department-export-format-icon xlsx"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><path d="M15 2v4h4M9 11l5 6m0-6-5 6"/></svg></span><span><strong>XLSX</strong><small>Planilha com três abas</small></span></button></div></div><span class="department-expander-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div></summary><div class="department-employees-grid">${group.employees
     .map((employee) => renderEmployeeCard(employee, { insideDepartment: true }))
-    .join("")}</div></section>`;
+    .join("")}</div></details>`;
+}
+
+function closeDepartmentExportMenus(exceptMenu = null) {
+  $$('[data-department-export-menu]').forEach((menu) => {
+    if (menu === exceptMenu) return;
+    menu.hidden = true;
+    const control = menu.closest('.department-export-control'),
+      trigger = control?.querySelector('[data-department-export-toggle]');
+    trigger?.setAttribute('aria-expanded', 'false');
+    control?.classList.remove('open');
+  });
+}
+
+function departmentExportContext(departmentValue) {
+  const group = groupRecordsByDepartment().find(
+      (item) => item.departamento === departmentValue,
+    ),
+    department = departmentParts(departmentValue),
+    displayName =
+      (department.code ? `${department.code} — ` : "") +
+      (department.name || departmentValue || "Departamento não informado");
+  return {
+    rows: group?.records || [],
+    scopeLabel: `Departamento ${displayName}`,
+    fileToken: `departamento_${displayName}`,
+    title: `Batidas Ímpares — ${displayName}`,
+  };
+}
+
+function updateDepartmentToggleAllButton() {
+  const button = $("[data-department-toggle-all]"),
+    expanders = $$(".department-expander");
+  if (!button || !expanders.length) return;
+  const allOpen = expanders.every((expander) => expander.open),
+    label = button.querySelector("span");
+  button.classList.toggle("all-open", allOpen);
+  button.setAttribute(
+    "aria-label",
+    allOpen ? "Fechar todos os departamentos" : "Abrir todos os departamentos",
+  );
+  button.dataset.tooltip = allOpen
+    ? "Fechar todos os departamentos"
+    : "Abrir todos os departamentos";
+  if (label) label.textContent = allOpen ? "Fechar todos" : "Abrir todos";
+}
+
+function toggleAllDepartmentExpanders() {
+  const expanders = $$(".department-expander");
+  if (!expanders.length) return;
+  const shouldOpen = !expanders.every((expander) => expander.open);
+  expanders.forEach((expander) => (expander.open = shouldOpen));
+  updateDepartmentToggleAllButton();
 }
 
 function bindCardControls() {
@@ -317,9 +378,11 @@ function bindCardControls() {
   );
 
   $$('[data-card-filter]').forEach((button) =>
-    button.addEventListener("click", () =>
-      applyCardFilter(button.dataset.cardFilter, button.dataset.value || ""),
-    ),
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      applyCardFilter(button.dataset.cardFilter, button.dataset.value || "");
+    }),
   );
 
   $$('[data-card-toolbar-filter]').forEach((button) =>
@@ -343,7 +406,7 @@ function bindCardControls() {
   $$('[data-card-grouping]').forEach((button) =>
     button.addEventListener("click", () => {
       const grouping = button.dataset.cardGrouping;
-      if (!['employee', 'department'].includes(grouping)) return;
+      if (!["employee", "department"].includes(grouping)) return;
       state.cardGrouping = grouping;
       state.currentPage = 1;
       renderCards();
@@ -351,6 +414,54 @@ function bindCardControls() {
       if (typeof saveUiPreferences === "function") saveUiPreferences();
     }),
   );
+
+  $("[data-department-toggle-all]")?.addEventListener(
+    "click",
+    toggleAllDepartmentExpanders,
+  );
+  $$(".department-expander").forEach((expander) =>
+    expander.addEventListener("toggle", updateDepartmentToggleAllButton),
+  );
+  updateDepartmentToggleAllButton();
+
+  $$('[data-department-export-toggle]').forEach((button) =>
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const control = button.closest('.department-export-control'),
+        menu = control?.querySelector('[data-department-export-menu]'),
+        willOpen = Boolean(menu?.hidden);
+      closeDepartmentExportMenus(willOpen ? menu : null);
+      if (!menu) return;
+      menu.hidden = !willOpen;
+      button.setAttribute('aria-expanded', String(willOpen));
+      control.classList.toggle('open', willOpen);
+    }),
+  );
+
+  $$('[data-department-export-format]').forEach((button) =>
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const context = departmentExportContext(button.dataset.department || ""),
+        format = button.dataset.departmentExportFormat;
+      closeDepartmentExportMenus();
+      if (format === "pdf") exportPdf(context);
+      if (format === "png") exportPng(context);
+      if (format === "xlsx") exportXlsx(context);
+    }),
+  );
+
+  if (!window.__departmentExportOutsideBound) {
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest('.department-export-control'))
+        closeDepartmentExportMenus();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeDepartmentExportMenus();
+    });
+    window.__departmentExportOutsideBound = true;
+  }
 }
 
 function renderCards() {

@@ -1,0 +1,244 @@
+/*
+ * 12-v1100-ux.css
+ * ZIP por departamento, toggles de colaboradores, controle global de expanders
+ * e animação uniforme dos ícones.
+ * Projeto: Ahgora — Batidas Ímpares v1.10.0
+ */
+
+/* Modal de exportação com quatro opções equilibradas */
+.export-modal-card {
+  width: min(900px, 100%);
+}
+.export-modal-card .choice-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.export-modal-card .choice-card {
+  min-height: 150px;
+}
+.choice-card[data-export="zip-departments"] .choice-icon {
+  background: linear-gradient(135deg, #fff5df, #ffe7b0);
+  color: #a65b00;
+}
+.zip-departments-card {
+  position: relative;
+  border-color: #edcf91;
+  background: linear-gradient(145deg, #fff 0%, #fffaf0 100%);
+}
+.zip-departments-card:hover {
+  border-color: #d79d31;
+  background: linear-gradient(145deg, #fffdf8 0%, #fff3d6 100%);
+}
+.zip-format-pills {
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px !important;
+}
+.zip-format-pills i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #ead39f;
+  color: #87500a;
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+}
+
+/* Agrupamento e abertura global dos departamentos */
+.cards-grouping-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.department-toggle-all {
+  height: 38px;
+  border: 1px solid #c8d8ee;
+  border-radius: 10px;
+  background: #fff;
+  color: #174ea6;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 9.5px;
+  font-weight: 900;
+  box-shadow: 0 3px 9px rgba(31, 50, 81, 0.05);
+  transition: 0.18s ease;
+}
+.department-toggle-all:hover,
+.department-toggle-all.all-open {
+  background: #eef5ff;
+  border-color: #9fbee9;
+  transform: translateY(-1px);
+}
+.department-toggle-all svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.department-toggle-all.all-open svg path {
+  transform-origin: center;
+  transform: rotate(180deg);
+}
+
+/* Toggle moderno na seleção de colaboradores */
+.employee-option {
+  position: relative;
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  gap: 9px !important;
+  align-items: center !important;
+  min-height: 48px;
+  padding: 7px 9px !important;
+  border: 1px solid transparent;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+.employee-option:hover {
+  background: #f5f8fd;
+  border-color: #dce7f6;
+  transform: translateX(2px);
+}
+.employee-toggle-input {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.employee-toggle {
+  width: 36px;
+  height: 21px;
+  border-radius: 999px;
+  background: #d9e0ea;
+  border: 1px solid #c5cfdd;
+  padding: 2px;
+  display: inline-flex !important;
+  align-items: center;
+  margin: 0 !important;
+  box-shadow: inset 0 1px 2px rgba(31, 50, 81, 0.1);
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.employee-toggle i {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(31, 50, 81, 0.25);
+  transform: translateX(0);
+  transition: transform 0.24s cubic-bezier(0.2, 0.85, 0.25, 1.2);
+}
+.employee-toggle-input:checked + .employee-toggle {
+  background: linear-gradient(135deg, #2874d6, #174ea6);
+  border-color: #174ea6;
+  box-shadow:
+    0 0 0 3px rgba(23, 78, 166, 0.1),
+    inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.employee-toggle-input:checked + .employee-toggle i {
+  transform: translateX(15px);
+}
+.employee-toggle-input:focus-visible + .employee-toggle {
+  outline: 3px solid rgba(30, 99, 214, 0.2);
+  outline-offset: 2px;
+}
+.employee-option-copy {
+  display: block !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+.employee-option-copy strong {
+  display: block;
+  color: #243247;
+  font-size: 10.5px !important;
+  line-height: 1.3 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.employee-option-copy > span {
+  display: block;
+  color: #738095;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 9px !important;
+  font-weight: 800;
+  margin-top: 3px !important;
+}
+.employee-option:has(.employee-toggle-input:checked) {
+  background: #eef5ff;
+  border-color: #c9dcfa;
+}
+
+/* Animação única para todos os ícones interativos da aplicação */
+.app-shell svg,
+.welcome-screen svg {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.app-shell :is(button, a, summary, [role="button"], .stat, .choice-card, .accordion-trigger, .department-group-head, .employee-option):hover svg,
+.app-shell :is(button, a, summary, [role="button"], .stat, .choice-card, .accordion-trigger, .department-group-head, .employee-option):focus-visible svg {
+  animation: application-icon-draw 0.72s ease both;
+}
+.app-shell :is(button, a, .stat, .choice-card, .accordion-trigger, .department-group-head):hover > svg,
+.app-shell :is(button, a, .stat, .choice-card, .accordion-trigger, .department-group-head):hover :is(.choice-icon, .stat-icon, .accordion-icon, .department-group-icon) svg {
+  transform: translateY(-2px) rotate(-4deg) scale(1.08);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes application-icon-draw {
+  0% {
+    stroke-dasharray: 5 24;
+    stroke-dashoffset: 16;
+  }
+  55% {
+    stroke-dasharray: 18 8;
+    stroke-dashoffset: 3;
+  }
+  100% {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .export-modal-card .choice-grid {
+    grid-template-columns: 1fr;
+  }
+  .cards-grouping-actions,
+  .department-toggle-all {
+    width: 100%;
+  }
+  .department-toggle-all {
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell svg,
+  .welcome-screen svg,
+  .employee-option,
+  .employee-toggle,
+  .employee-toggle i,
+  .department-toggle-all {
+    animation: none !important;
+    transition: none !important;
+  }
+}

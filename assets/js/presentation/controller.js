@@ -160,6 +160,7 @@ function bind() {
       if (t === "pdf") exportPdf();
       if (t === "png") exportPng();
       if (t === "xlsx") exportXlsx();
+      if (t === "zip-departments") exportDepartmentsZip();
     }),
   );
   $$(".modal-close").forEach((b) =>

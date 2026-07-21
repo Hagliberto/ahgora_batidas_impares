@@ -17,11 +17,14 @@ test("index referencia somente assets locais existentes", () => {
     ...html.matchAll(/<(?:link|script)\b[^>]+(?:href|src)="([^"]+)"/g),
   ].map((match) => match[1]);
 
-  assert.ok(references.length >= 21);
+  assert.ok(references.length >= 24);
   assert.ok(references.includes("assets/icons/favicon.svg"));
   assert.ok(references.includes("assets/css/07-experience.css"));
   assert.ok(references.includes("assets/css/08-polish.css"));
   assert.ok(references.includes("assets/css/09-v180.css"));
+  assert.ok(references.includes("assets/css/11-v190-departments.css"));
+  assert.ok(references.includes("assets/css/12-v1100-ux.css"));
+  assert.ok(references.includes("assets/js/infrastructure/export/department-zip-exporter.js"));
   assert.ok(references.includes("assets/js/presentation/experience.js"));
   for (const reference of references) {
     assert.equal(
@@ -121,7 +124,7 @@ test("favicon e experiência simplificada estão integrados", () => {
   assert.match(polish, /#exportMenuBtn/);
   assert.match(polish, /\.welcome-hero/);
   assert.match(polish, /\.has-tooltip/);
-  assert.equal(manifest.version, "1.8.2");
+  assert.equal(manifest.version, "1.10.0");
 });
 
 
@@ -169,5 +172,81 @@ test("validador JavaScript é multiplataforma e não depende de utilitários Uni
   assert.match(validator, /windowsHide:\s*true/);
   assert.doesNotMatch(packageJson.scripts["check:js"], /(?:^|\s)(?:find|xargs|sort)(?:\s|$)/);
   assert.equal(fs.existsSync(path.join(ROOT, ".gitattributes")), true);
-  assert.equal(fs.existsSync(path.join(ROOT, "scripts/publish-v1.8.2.ps1")), true);
+  assert.equal(fs.existsSync(path.join(ROOT, "scripts/publish-v1.10.0.ps1")), true);
+});
+
+
+test("departamentos usam expanders fechados e exportacao contextual", () => {
+  const renderers = read("assets/js/presentation/renderers.js");
+  const xlsx = read("assets/js/infrastructure/export/export-core-xlsx.js");
+  const pdf = read("assets/js/infrastructure/export/pdf-exporter.js");
+  const png = read("assets/js/infrastructure/export/png-exporter.js");
+  const css = read("assets/css/11-v190-departments.css");
+
+  assert.match(renderers, /<details class=\"department-card-group department-expander\"/);
+  assert.doesNotMatch(renderers, /department-card-group department-expander\" open/);
+  assert.match(renderers, /data-department-export-format=\"pdf\"/);
+  assert.match(renderers, /data-department-export-format=\"png\"/);
+  assert.match(renderers, /data-department-export-format=\"xlsx\"/);
+  assert.match(renderers, /function departmentExportContext/);
+  assert.match(renderers, /group\?\.records \|\| \[\]/);
+  assert.match(xlsx, /function resolveExportOptions/);
+  assert.match(xlsx, /employeeCounts\(exportRows\)/);
+  assert.match(pdf, /function exportPdf\(options = \{\}\)/);
+  assert.match(png, /function exportPng\(options = \{\}\)/);
+  assert.match(css, /\.department-export-menu/);
+  assert.match(css, /\.department-expander:not\(\[open\]\)/);
+});
+
+
+test("pasta OLD permanece ausente e bloqueada pelo gitignore", () => {
+  const gitignore = read(".gitignore");
+  assert.equal(fs.existsSync(path.join(ROOT, "OLD")), false);
+  assert.match(gitignore, /^\/OLD\/$/m);
+  assert.equal(fs.existsSync(path.join(ROOT, "exemplos")), true);
+});
+
+
+test("ZIP por departamento, expansao global, agrupamento padrao e toggles estao integrados", () => {
+  const html = read("index.html");
+  const runtime = read("assets/js/core/runtime.js");
+  const experience = read("assets/js/presentation/experience.js");
+  const renderers = read("assets/js/presentation/renderers.js");
+  const dashboard = read("assets/js/application/dashboard-service.js");
+  const zipExporter = read("assets/js/infrastructure/export/department-zip-exporter.js");
+  const xlsx = read("assets/js/infrastructure/export/export-core-xlsx.js");
+  const png = read("assets/js/infrastructure/export/png-exporter.js");
+  const css = read("assets/css/12-v1100-ux.css");
+
+  assert.match(html, /data-export="zip-departments"/);
+  assert.match(html, /department-zip-exporter\.js/);
+  assert.match(runtime, /cardGrouping:\s*"department"/);
+  assert.match(experience, /batidasImparesUiV3/);
+  assert.match(renderers, /data-department-toggle-all/);
+  assert.match(renderers, /function toggleAllDepartmentExpanders/);
+  assert.match(dashboard, /employee-toggle-input/);
+  assert.match(dashboard, /employee-toggle/);
+  assert.match(zipExporter, /function exportDepartmentsZip/);
+  assert.match(zipExporter, /buildPdf\(context\)/);
+  assert.match(zipExporter, /buildXlsx\(context\)/);
+  assert.match(zipExporter, /buildPngFiles\(context\)/);
+  assert.match(xlsx, /function buildXlsx/);
+  assert.match(png, /async function buildPngFiles/);
+  assert.match(css, /application-icon-draw/);
+  assert.match(css, /employee-toggle-input:checked/);
+});
+
+
+test("publicador valida a v1.10.0 e bloqueia clones anteriores a limpeza de OLD", () => {
+  const publisher = read("scripts/publish-v1.10.0.ps1");
+  const recovery = read("scripts/recover-and-publish-v1.10.0.ps1");
+
+  assert.match(publisher, /content=\["''\]1\\\.10\\\.0\["''\]/);
+  assert.match(publisher, /v1\\\.10\\\.0/);
+  assert.match(publisher, /\\\[1\\\.10\\\.0\\\]/);
+  assert.doesNotMatch(publisher, /content=\["''\]1\\\.9\\\.0\["''\]/);
+  assert.match(publisher, /historicos divergentes/);
+  assert.match(recovery, /git.*clone/s);
+  assert.match(recovery, /recover-and-publish-v1\.10\.0/);
+  assert.match(recovery, /Nao faca novos commits ou pushes pelo clone antigo/);
 });

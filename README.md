@@ -14,6 +14,13 @@ O projeto funciona diretamente no navegador, sem servidor, banco de dados ou dep
 - Seleção de múltiplos colaboradores.
 - Cards e indicadores interativos.
 - Visualização em tabela, cards agrupados por empregado ou departamento e calendário operacional 21 → 20.
+- Departamentos exibidos em expanders fechados por padrão, com resumo de empregados e pendências.
+- Exportação individual por departamento em PDF, PNG ou XLSX, respeitando os demais filtros ativos.
+- Pacote ZIP por departamento com arquivos PDF, PNG e XLSX organizados em pastas.
+- Controle para abrir ou fechar todos os expanders de departamento.
+- Visualização em Cards inicia por departamento.
+- Seleção de colaboradores com toggles responsivos e animados.
+- Ícones interativos da aplicação usam a mesma animação vetorial do Guia Rápido.
 - Exportação para PDF, PNG e XLSX.
 - Persistência local da última importação e das preferências de interface.
 - Atalhos de teclado: `/` abre a busca e `Esc` limpa os filtros.
@@ -56,7 +63,7 @@ Não é necessário instalar pacotes ou iniciar servidor.
 │       └── shared/
 ├── scripts/
 │   ├── check-js.js
-│   └── publish-v1.8.2.ps1
+│   └── publish-v1.10.0.ps1
 ├── docs/
 │   ├── architecture/
 │   ├── reference/
@@ -79,15 +86,22 @@ npm run check:js
 
 O validador JavaScript utiliza apenas APIs nativas do Node.js e funciona no Windows, Linux e macOS.
 
-## Publicação da v1.8.2
+## Publicação da v1.10.0
 
-Depois de extrair o pacote sobre o repositório e permanecer na branch `dev`, execute no PowerShell:
+Depois de extrair o pacote sobre o repositório e permanecer na branch `dev`, execute no PowerShell 7:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\publish-v1.8.2.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\publish-v1.10.0.ps1
 ```
 
-O script valida a versão, executa os testes, cria o hotfix a partir da `main`, integra em `main` e `dev`, cria a tag anotada e publica todas as referências em um único push atômico.
+Quando o clone local ainda possuir o histórico anterior à remoção de `OLD`, utilize o recuperador. Ele cria um clone novo a partir do remoto reescrito, aplica o pacote e inicia a publicação:
+
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\recover-and-publish-v1.10.0.ps1
+```
+
+O script valida a versão, executa os testes, cria a branch `release/v1.10.0`, integra em `dev` e `main`, cria a tag anotada, alinha `dev` e `main` no mesmo commit e publica todas as referências em um push atômico.
+Ele também bloqueia a publicação quando identifica um clone anterior à reescrita do histórico que removeu a pasta `OLD`; nesse caso, a versão deve ser aplicada sobre o clone novo validado.
 
 ## Compatibilidade
 
@@ -106,4 +120,4 @@ O projeto usa scripts clássicos externos, em ordem explícita, para continuar f
 
 ## Versão
 
-**v1.8.2**
+**v1.10.0**

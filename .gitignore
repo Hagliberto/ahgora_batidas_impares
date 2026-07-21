@@ -16,3 +16,6 @@ Thumbs.db
 
 # Checksums de distribuição
 *.zip.sha256
+
+# Pasta histórica somente local
+/OLD/
