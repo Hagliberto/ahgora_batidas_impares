@@ -33,7 +33,7 @@ Use os filtros de colaborador, busca, status, departamento e período. Os cards 
 A aplicação oferece três modos:
 
 - **Tabela:** visão detalhada e ordenável.
-- **Cards:** alterne entre agrupamento por empregado e por departamento. As pendências de cada empregado aparecem em colunas, com matrícula em destaque, selo de reincidência e filtros em pill. As localizações não são exibidas nessa visão para manter os cards mais objetivos.
+- **Cards:** inicia no agrupamento por departamento e permite alternar para agrupamento por empregado. As pendências de cada empregado aparecem em colunas, com matrícula em destaque, selo de reincidência e filtros em pill. As localizações não são exibidas nessa visão para manter os cards mais objetivos. Na visão por departamento, todos os setores iniciam recolhidos em expanders independentes.
 - **Calendário:** dois meses no período operacional de 21 a 20. Cada mês funciona como um expander independente; quando apenas um estiver aberto, ele ocupa o centro da visualização. Dias, legendas e ocorrências possuem tooltips informativos.
 
 ## 6. Exportar
@@ -43,6 +43,7 @@ O menu de exportação disponibiliza:
 - PDF detalhado.
 - PNG detalhado.
 - XLSX estruturado com resumo.
+- ZIP por departamento, com uma pasta para cada setor e relatórios em PDF, PNG e XLSX.
 
 Datas e horários são apresentados no padrão brasileiro (`DD/MM/AAAA HH:mm:ss`). Os nomes dos arquivos usam formato compatível com o Windows: `DD.MM.AAAA_HH.MM.SS`.
 
@@ -68,6 +69,9 @@ Nenhum dado é enviado para servidores. O processamento e a persistência ocorre
 - Use **Abrir ambos** ou **Recolher** para controlar os dois meses de uma vez.
 - Passe o mouse sobre dias, pendências e legendas para consultar tooltips detalhados.
 - Use o botão com ícone de lixeira no cabeçalho da Visualização para limpar rapidamente todos os filtros ativos.
-- Na aba Cards, use **Por empregado** ou **Por departamento** para alterar o agrupamento.
-- No Guia Rápido, os ícones possuem animações discretas ao passar o mouse.
+- Na aba Cards, o padrão é **Por departamento**. Use **Por empregado** para alternar o agrupamento.
+- Use **Abrir todos** ou **Fechar todos** para controlar os expanders departamentais exibidos.
+- No filtro de colaboradores, ative ou desative cada empregado por meio dos toggles animados posicionados antes do nome.
+- Em **Por departamento**, clique no cabeçalho para abrir o setor. Use **Exportar** para baixar PDF, PNG ou XLSX somente daquele departamento; os demais filtros ativos continuam sendo respeitados.
+- Todos os ícones interativos da aplicação usam a mesma animação vetorial do Guia Rápido ao passar o mouse.
 - A visualização escolhida e o estado das seções principais são preservados no navegador.

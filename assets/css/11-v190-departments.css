@@ -1,0 +1,383 @@
+/*
+ * 11-v190-departments.css
+ * Expanders de departamento e exportação contextual.
+ * Projeto: Ahgora — Batidas Ímpares v1.10.0
+ */
+
+.department-card-group.department-expander {
+  position: relative;
+  overflow: visible;
+  background: #fff;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.department-card-group.department-expander:hover {
+  border-color: #c4d6ec;
+  box-shadow: 0 10px 26px rgba(31, 50, 81, 0.08);
+}
+
+.department-card-group.department-expander[open] {
+  border-color: #bcd2ee;
+  box-shadow: 0 14px 32px rgba(31, 50, 81, 0.1);
+}
+
+.department-expander > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.department-expander > summary::-webkit-details-marker {
+  display: none;
+}
+
+.department-expander:not([open]) > .department-group-head {
+  border-bottom-color: transparent;
+  border-radius: 15px;
+}
+
+.department-expander[open] > .department-group-head {
+  border-radius: 15px 15px 0 0;
+}
+
+.department-group-head {
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  min-height: 72px;
+  transition: background 0.18s ease;
+}
+
+.department-group-head:hover {
+  background: linear-gradient(90deg, #f0f7ff 0%, #f8fbff 100%);
+}
+
+.department-group-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.department-group-actions .dept-filter {
+  min-height: 36px;
+  padding-inline: 11px;
+}
+
+.department-group-actions .dept-filter svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.department-export-control {
+  position: relative;
+  z-index: 20;
+}
+
+.department-export-control.open {
+  z-index: 80;
+}
+
+.department-export-trigger {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #bfd3ef;
+  border-radius: 10px;
+  padding: 7px 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #f2f7ff 100%);
+  color: #174ea6;
+  font-size: 9.8px;
+  font-weight: 900;
+  box-shadow: 0 3px 9px rgba(23, 78, 166, 0.08);
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.department-export-trigger:hover,
+.department-export-trigger[aria-expanded="true"] {
+  background: #174ea6;
+  border-color: #174ea6;
+  color: #fff;
+  box-shadow: 0 7px 17px rgba(23, 78, 166, 0.2);
+  transform: translateY(-1px);
+}
+
+.department-export-trigger svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.department-export-trigger .department-export-caret {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.16s ease;
+}
+
+.department-export-trigger[aria-expanded="true"] .department-export-caret {
+  transform: rotate(180deg);
+}
+
+.department-export-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(310px, calc(100vw - 42px));
+  padding: 8px;
+  border: 1px solid #cbd9eb;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 48px rgba(26, 44, 73, 0.22);
+  backdrop-filter: blur(12px);
+  z-index: 120;
+}
+
+.department-export-menu[hidden] {
+  display: none !important;
+}
+
+.department-export-menu::before {
+  content: "";
+  position: absolute;
+  right: 28px;
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border-left: 1px solid #cbd9eb;
+  border-top: 1px solid #cbd9eb;
+  transform: rotate(45deg);
+}
+
+.department-export-menu-head {
+  position: relative;
+  z-index: 1;
+  padding: 7px 8px 9px;
+  border-bottom: 1px solid #e4eaf2;
+  margin-bottom: 5px;
+}
+
+.department-export-menu-head strong,
+.department-export-menu-head span,
+.department-export-menu-head small {
+  display: block;
+}
+
+.department-export-menu-head strong {
+  color: #173e86;
+  font-size: 11px;
+}
+
+.department-export-menu-head span {
+  margin-top: 3px;
+  color: #344054;
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.department-export-menu-head small {
+  margin-top: 3px;
+  color: #7b8798;
+  font-size: 8.8px;
+  line-height: 1.4;
+}
+
+.department-export-menu > button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  padding: 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  color: #344054;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.department-export-menu > button:hover,
+.department-export-menu > button:focus-visible {
+  background: #f2f6fc;
+  transform: translateX(2px);
+}
+
+.department-export-menu > button > span:last-child strong,
+.department-export-menu > button > span:last-child small {
+  display: block;
+}
+
+.department-export-menu > button > span:last-child strong {
+  font-size: 10.5px;
+}
+
+.department-export-menu > button > span:last-child small {
+  margin-top: 2px;
+  color: #7b8798;
+  font-size: 8.8px;
+}
+
+.department-export-format-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+}
+
+.department-export-format-icon svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.department-export-format-icon.pdf {
+  color: #b42318;
+  background: #fff0ef;
+  border-color: #ffd1cd;
+}
+
+.department-export-format-icon.png {
+  color: #5b43b5;
+  background: #f1edff;
+  border-color: #dcd3ff;
+}
+
+.department-export-format-icon.xlsx {
+  color: #067647;
+  background: #eafaf2;
+  border-color: #c7ecd9;
+}
+
+.department-expander-chevron {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #667085;
+  background: #fff;
+  border: 1px solid #dce4ef;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    background 0.18s ease;
+}
+
+.department-expander-chevron svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.department-expander[open] .department-expander-chevron {
+  transform: rotate(180deg);
+  color: #fff;
+  background: #174ea6;
+  border-color: #174ea6;
+}
+
+.department-expander > .department-employees-grid {
+  animation: department-expand-in 0.2s ease-out;
+}
+
+@keyframes department-expand-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .department-group-head {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .department-group-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding-left: 54px;
+  }
+
+  .department-export-menu {
+    left: 0;
+    right: auto;
+  }
+
+  .department-export-menu::before {
+    left: 30px;
+    right: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .department-group-actions {
+    padding-left: 0;
+  }
+
+  .department-group-actions .dept-filter,
+  .department-export-trigger {
+    flex: 1;
+  }
+
+  .department-export-control {
+    flex: 1;
+  }
+
+  .department-export-trigger {
+    width: 100%;
+  }
+
+  .department-expander-chevron {
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .department-expander > .department-employees-grid {
+    animation: none;
+  }
+
+  .department-card-group.department-expander,
+  .department-export-trigger,
+  .department-export-menu > button,
+  .department-expander-chevron {
+    transition: none;
+  }
+}

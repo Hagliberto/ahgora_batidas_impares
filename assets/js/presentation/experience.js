@@ -6,7 +6,7 @@
 
 "use strict";
 
-const UI_PREFERENCES_KEY = "batidasImparesUiV2";
+const UI_PREFERENCES_KEY = "batidasImparesUiV3";
 
 function readUiPreferences() {
   try {

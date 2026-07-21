@@ -2,6 +2,43 @@
 
 Todas as mudanças relevantes deste projeto são registradas neste arquivo.
 
+## [1.10.0] — 21/07/2026
+
+### Adicionado
+
+- opção **ZIP por departamento** no modal de exportação da appbar;
+- pacote com uma pasta por departamento e arquivos em PDF, PNG e XLSX;
+- arquivo `LEIA-ME.txt` dentro do ZIP com resumo dos departamentos e filtros utilizados;
+- botão para abrir ou fechar todos os expanders departamentais da página atual;
+- toggles responsivos e animados para selecionar colaboradores;
+- exportador `department-zip-exporter.js` e folha de estilo `12-v1100-ux.css`;
+- script robusto de publicação `scripts/publish-v1.10.0.ps1`.
+- correção da validação interna do publicador para conferir corretamente a versão 1.10.0 e bloquear clones com histórico anterior à remoção de `OLD`.
+- utilitário `scripts/recover-and-publish-v1.10.0.ps1` para migrar com segurança as alterações de um clone antigo para um clone novo após a reescrita do histórico.
+
+### Alterado
+
+- agrupamento padrão da aba Cards definido como **Por departamento**;
+- chave de preferências da interface atualizada para aplicar o novo padrão sem conflito com preferências antigas;
+- exportadores XLSX e PNG refatorados para também gerar arquivos em memória, necessários ao pacote ZIP;
+- ícones interativos da aplicação passaram a utilizar a mesma animação vetorial do Guia Rápido;
+- seleção de colaboradores reorganizada com o controle antes do nome e melhor resposta em telas menores.
+
+## [1.9.0] — 21/07/2026
+
+### Adicionado
+
+- departamentos da visão em cards transformados em expanders fechados por padrão;
+- menu contextual no cabeçalho de cada departamento para exportar apenas os registros daquele setor;
+- exportação departamental em PDF, PNG e XLSX, respeitando os demais filtros ativos;
+- nomes de arquivo identificados pelo departamento e data/hora no padrão brasileiro;
+- folha de estilo `11-v190-departments.css` e script de publicação robusta `scripts/publish-v1.9.0.ps1`.
+
+### Melhorado
+
+- cabeçalho dos departamentos com contagem de empregados, pendências, filtro rápido, ação de exportação e indicador visual de abertura;
+- exportadores refatorados para aceitar um conjunto específico de registros sem alterar a exportação global.
+
 ## [1.8.2] — 21/07/2026
 
 ### Corrigido

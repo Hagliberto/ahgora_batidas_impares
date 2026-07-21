@@ -12,7 +12,7 @@
 | `.gitattributes` | Normalização de finais de linha e arquivos binários |
 | `.gitignore` | Arquivos que não devem entrar no repositório |
 | `scripts/check-js.js` | Validação sintática multiplataforma dos módulos JavaScript |
-| `scripts/publish-v1.8.2.ps1` | Publicação robusta do hotfix com testes e push atômico |
+| `scripts/publish-v1.10.0.ps1` | Publicação robusta da release, alinhando `main` e `dev` no mesmo commit |
 
 ## CSS
 
@@ -26,6 +26,12 @@ Os arquivos são numerados para documentar e garantir a ordem de cascata.
 | `04-welcome-and-analysis.css` | tela inicial e painel analítico |
 | `05-responsive-application.css` | ajustes responsivos complementares |
 | `06-calendar.css` | calendário mensal |
+| `07-experience.css` | filtros ativos, acessibilidade e navegação essencial |
+| `08-polish.css` | acabamento visual, ícones e tooltips |
+| `09-v180.css` | agrupamentos de cards, Guia Rápido wide e animações |
+| `10-v181-hotfix.css` | correção de posicionamento do tooltip de limpeza |
+| `11-v190-departments.css` | expanders e exportação contextual por departamento |
+| `12-v1100-ux.css` | ZIP por departamento, toggles, expansão global e animação uniforme dos ícones |
 
 ## JavaScript
 
@@ -47,7 +53,7 @@ Os arquivos são numerados para documentar e garantir a ordem de cascata.
 A ordem dos `<script>` em `index.html` é parte do contrato do projeto. `app.js` deve permanecer por último.
 
 
-## Recursos de experiência da v1.8.0
+## Recursos de experiência da versão atual
 
 - `assets/icons/favicon.svg`: identidade visual do navegador.
 - `assets/css/07-experience.css`: filtros ativos, acessibilidade e recursos essenciais de navegação.
@@ -55,7 +61,10 @@ A ordem dos `<script>` em `index.html` é parte do contrato do projeto. `app.js`
 - `assets/css/09-v180.css`: agrupamento dos cards, pendências em colunas, Guia Rápido wide e animações no hover.
 - `assets/css/06-calendar.css`: calendários mensais expansíveis e layout centralizado.
 - `assets/js/presentation/experience.js`: preferências essenciais e filtros ativos.
-- `assets/js/presentation/renderers.js`: renderização e controle dos expanders do calendário.
+- `assets/js/presentation/renderers.js`: renderização dos cards, expanders do calendário e exportação contextual por departamento.
+- `assets/css/11-v190-departments.css`: expanders fechados por padrão, menu de formatos e estados interativos dos departamentos.
+- `assets/css/12-v1100-ux.css`: pacote ZIP, toggles de colaboradores, controle global dos expanders e animação dos ícones.
+- `assets/js/infrastructure/export/department-zip-exporter.js`: geração local do pacote com PDF, PNG e XLSX para cada departamento.
 
 
 ## Validação multiplataforma

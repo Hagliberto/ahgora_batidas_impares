@@ -6,8 +6,8 @@
 
 "use strict";
 
-function ensureData() {
-  if (!state.filtered.length) {
+function ensureData(rows = state.filtered) {
+  if (!Array.isArray(rows) || !rows.length) {
     toast(
       "Nada para exportar",
       "Ajuste os filtros ou importe um arquivo.",
@@ -16,6 +16,20 @@ function ensureData() {
     return false;
   }
   return true;
+}
+
+function resolveExportOptions(options = {}) {
+  const rows = Array.isArray(options.rows) ? options.rows : state.filtered,
+    scopeLabel = String(options.scopeLabel || "").trim(),
+    fileToken = safeFileSegment(options.fileToken || scopeLabel),
+    title = String(options.title || "Relatório de Batidas Ímpares").trim();
+  return { rows, scopeLabel, fileToken, title };
+}
+
+function exportFileBase(context) {
+  return context.fileToken
+    ? `batidas_impares_${context.fileToken}`
+    : "batidas_impares_detalhado";
 }
 function downloadBlob(blob, name) {
   const url = URL.createObjectURL(blob),
@@ -199,103 +213,120 @@ function sheetXml(headers, rows, widths, styleFn) {
 function stylesXml() {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="10"/><name val="Calibri"/><family val="2"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="10"/><name val="Calibri"/></font><font><b/><color rgb="FF243247"/><sz val="10"/><name val="Calibri"/></font></fonts><fills count="18"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF7F8FB"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFBF9FF"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF7FBFF"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFAFB"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF8FDF9"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFDF8"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF7FCFD"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE7F8FC"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFE5E8"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF405268"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF5B43B5"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF314B9C"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF165B9F"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFB4233A"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF167049"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFB56A10"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border/><border><left style="thin"><color rgb="FFDDE4EE"/></left><right style="thin"><color rgb="FFDDE4EE"/></right><top style="thin"><color rgb="FFDDE4EE"/></top><bottom style="thin"><color rgb="FFDDE4EE"/></bottom></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="18"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="0" fillId="2" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="9" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="10" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="6" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="7" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="8" borderId="1" xfId="0" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="12" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="13" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="14" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="15" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="16" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="17" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="1" fillId="11" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="3" borderId="1" xfId="0" applyFill="1" applyFont="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
 }
-function exportXlsx() {
-  if (!ensureData()) return;
-  showLoading("Gerando XLSX estruturado...");
+function buildXlsx(options = {}) {
+  const context = resolveExportOptions(options),
+    exportRows = context.rows,
+    headers = [
+      "Dia",
+      "Matrícula",
+      "Nome",
+      "Status",
+      "Departamento",
+      "Cargo",
+      "Localizações",
+    ],
+    rows = exportRows.map((r) => [
+      r.dateObj ? formatDate(r.dateObj) : r.dia,
+      r.matricula,
+      r.nome,
+      r.status,
+      r.departamento,
+      r.cargo,
+      r.localizacoes,
+    ]),
+    headerStyles = [9, 10, 11, 12, 13, 14, 15],
+    bodyStyles = [1, 2, 3, 0, 6, 7, 8];
+
+  const details = sheetXml(
+      headers,
+      rows,
+      [13, 13, 34, 24, 52, 34, 60],
+      (type, i, val) =>
+        type === "header"
+          ? headerStyles[i]
+          : i === 3
+            ? statusGroup(val) === "empregado"
+              ? 4
+              : statusGroup(val) === "gestor"
+                ? 5
+                : 1
+            : bodyStyles[i],
+    ),
+    summaryRows = employeeCounts(exportRows).map((r, i) => [
+      i + 1,
+      r.matricula,
+      r.nome,
+      r.count,
+    ]),
+    summary = sheetXml(
+      ["Posição", "Matrícula", "Nome", "Batidas ímpares"],
+      summaryRows,
+      [10, 13, 38, 18],
+      (type, i) =>
+        type === "header" ? [15, 10, 11, 12][i] : [1, 2, 3, 6][i],
+    ),
+    metaRows = [
+      ["Relatório", context.title.replace(/^Relatório de /, "")],
+      ["Escopo", context.scopeLabel || "Filtros ativos da consulta"],
+      ["Arquivo de origem", state.fileName],
+      ["Registros exportados", exportRows.length],
+      ["Período", dateRangeText(exportRows)],
+      ["Gerado em", formatDateTimeBr()],
+    ],
+    meta = sheetXml(
+      ["Informação", "Valor"],
+      metaRows,
+      [24, 70],
+      (type, i) => (type === "header" ? [15, 10][i] : [16, 17][i]),
+    ),
+    files = [
+      {
+        name: "[Content_Types].xml",
+        data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
+      },
+      {
+        name: "_rels/.rels",
+        data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
+      },
+      {
+        name: "xl/workbook.xml",
+        data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets><sheet name="Detalhes" sheetId="1" r:id="rId1"/><sheet name="Resumo por colaborador" sheetId="2" r:id="rId2"/><sheet name="Informações" sheetId="3" r:id="rId3"/></sheets></workbook>`,
+      },
+      {
+        name: "xl/_rels/workbook.xml.rels",
+        data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
+      },
+      { name: "xl/styles.xml", data: stylesXml() },
+      { name: "xl/worksheets/sheet1.xml", data: details },
+      { name: "xl/worksheets/sheet2.xml", data: summary },
+      { name: "xl/worksheets/sheet3.xml", data: meta },
+    ];
+
+  return zipStore(files);
+}
+
+function exportXlsx(options = {}) {
+  const context = resolveExportOptions(options),
+    exportRows = context.rows;
+  if (!ensureData(exportRows)) return;
+  showLoading(
+    context.scopeLabel
+      ? `Gerando XLSX de ${context.scopeLabel}...`
+      : "Gerando XLSX estruturado...",
+  );
   setTimeout(() => {
     try {
-      const headers = [
-          "Dia",
-          "Matrícula",
-          "Nome",
-          "Status",
-          "Departamento",
-          "Cargo",
-          "Localizações",
-        ],
-        rows = state.filtered.map((r) => [
-          r.dateObj ? formatDate(r.dateObj) : r.dia,
-          r.matricula,
-          r.nome,
-          r.status,
-          r.departamento,
-          r.cargo,
-          r.localizacoes,
-        ]),
-        headerStyles = [9, 10, 11, 12, 13, 14, 15],
-        bodyStyles = [1, 2, 3, 0, 6, 7, 8];
-      const details = sheetXml(
-        headers,
-        rows,
-        [13, 13, 34, 24, 52, 34, 60],
-        (type, i, val) =>
-          type === "header"
-            ? headerStyles[i]
-            : i === 3
-              ? statusGroup(val) === "empregado"
-                ? 4
-                : statusGroup(val) === "gestor"
-                  ? 5
-                  : 1
-              : bodyStyles[i],
-      );
-      const summaryRows = employeeCounts().map((r, i) => [
-          i + 1,
-          r.matricula,
-          r.nome,
-          r.count,
-        ]),
-        summary = sheetXml(
-          ["Posição", "Matrícula", "Nome", "Batidas ímpares"],
-          summaryRows,
-          [10, 13, 38, 18],
-          (type, i) =>
-            type === "header" ? [15, 10, 11, 12][i] : [1, 2, 3, 6][i],
-        );
-      const metaRows = [
-          ["Relatório", "Batidas ímpares"],
-          ["Arquivo de origem", state.fileName],
-          ["Registros filtrados", state.filtered.length],
-          ["Período", dateRangeText(state.filtered)],
-          ["Gerado em", formatDateTimeBr()],
-        ],
-        meta = sheetXml(
-          ["Informação", "Valor"],
-          metaRows,
-          [24, 70],
-          (type, i) => (type === "header" ? [15, 10][i] : [16, 17][i]),
-        );
-      const files = [
-        {
-          name: "[Content_Types].xml",
-          data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
-        },
-        {
-          name: "_rels/.rels",
-          data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
-        },
-        {
-          name: "xl/workbook.xml",
-          data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets><sheet name="Detalhes" sheetId="1" r:id="rId1"/><sheet name="Resumo por colaborador" sheetId="2" r:id="rId2"/><sheet name="Informações" sheetId="3" r:id="rId3"/></sheets></workbook>`,
-        },
-        {
-          name: "xl/_rels/workbook.xml.rels",
-          data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
-        },
-        { name: "xl/styles.xml", data: stylesXml() },
-        { name: "xl/worksheets/sheet1.xml", data: details },
-        { name: "xl/worksheets/sheet2.xml", data: summary },
-        { name: "xl/worksheets/sheet3.xml", data: meta },
-      ];
       downloadBlob(
-        new Blob([zipStore(files)], {
+        new Blob([buildXlsx(context)], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }),
-        `batidas_impares_detalhado_${fileStamp()}.xlsx`,
+        `${exportFileBase(context)}_${fileStamp()}.xlsx`,
       );
       toast(
         "XLSX gerado",
-        "Planilha estruturada com cores, filtros e três abas.",
+        context.scopeLabel
+          ? `Planilha criada somente com os dados de ${context.scopeLabel}.`
+          : "Planilha estruturada com cores, filtros e três abas.",
       );
     } catch (e) {
       toast("Erro ao gerar XLSX", e.message, "error", 5000);

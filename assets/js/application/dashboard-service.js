@@ -76,7 +76,7 @@ function populateEmployeeOptions() {
         .map((r) => {
           const key = employeeKey(r),
             checked = state.selectedEmployees.has(key) ? "checked" : "";
-          return `<label class="employee-option"><input type="checkbox" value="${escapeHtml(key)}" ${checked}><span><strong>${escapeHtml(r.nome || "Sem nome")}</strong><span>${escapeHtml(r.matricula)}</span></span></label>`;
+          return `<label class="employee-option"><input class="employee-toggle-input" type="checkbox" value="${escapeHtml(key)}" ${checked}><span class="employee-toggle" aria-hidden="true"><i></i></span><span class="employee-option-copy"><strong>${escapeHtml(r.nome || "Sem nome")}</strong><span>${escapeHtml(r.matricula)}</span></span></label>`;
         })
         .join("")
     : '<div class="employee-empty">Nenhum colaborador disponível.</div>';

@@ -1,4 +1,4 @@
-PAINEL DE BATIDAS ÍMPARES — v1.8.0
+PAINEL DE BATIDAS ÍMPARES — v1.10.0
 
 A documentação foi migrada para Markdown.
 
@@ -8,3 +8,7 @@ Abra:
 - docs/architecture/ARCHITECTURE.md
 
 Para executar a aplicação, abra index.html.
+
+Na visão por departamento, cada setor inicia recolhido e possui exportação individual em PDF, PNG e XLSX.
+
+A exportação geral inclui um ZIP por departamento com PDF, PNG e XLSX. A visão de cards inicia por departamento e os colaboradores são selecionados por toggles animados.

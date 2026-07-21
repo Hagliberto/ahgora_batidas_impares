@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#174ea6" />
     <meta name="application-name" content="Ahgora — Batidas Ímpares" />
-    <meta name="version" content="1.8.2" />
+    <meta name="version" content="1.10.0" />
     <title>Batidas Ímpares — Painel de conferência</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
     <link rel="shortcut icon" href="assets/icons/favicon.svg" />
@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="assets/css/08-polish.css" />
     <link rel="stylesheet" href="assets/css/09-v180.css" />
     <link rel="stylesheet" href="assets/css/10-v181-hotfix.css" />
+    <link rel="stylesheet" href="assets/css/11-v190-departments.css" />
+    <link rel="stylesheet" href="assets/css/12-v1100-ux.css" />
   </head>
   <body class="welcome-mode">
     <section
@@ -160,7 +162,7 @@
             <path d="m2 9 10-5 10 5-10 5z" />
             <path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6" /></svg
           ><strong>Hagliberto Alves de Oliveira</strong
-          ><span class="sep">|</span><small>v1.8.2</small></a
+          ><span class="sep">|</span><small>v1.10.0</small></a
         >
       </footer>
     </section>
@@ -654,7 +656,7 @@
         </div>
       </div>
       <div class="modal" id="exportModal" role="dialog" aria-modal="true">
-        <div class="modal-card small">
+        <div class="modal-card export-modal-card">
           <div class="modal-head">
             <div>
               <h3>Exportar relatório detalhado</h3>
@@ -709,6 +711,18 @@
                 >Planilha com cores por coluna, filtros, status diferenciados e
                 abas de resumo.</span
               >
+            </button>
+            <button class="choice-card zip-departments-card" data-export="zip-departments">
+              <div class="choice-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 7h16v13H4z" />
+                  <path d="M7 4h10l2 3H5z" />
+                  <path d="M12 10v7m0 0-3-3m3 3 3-3" />
+                </svg>
+              </div>
+              <strong>ZIP por departamento</strong>
+              <span>Cria uma pasta para cada departamento com relatórios em PDF, PNG e XLSX.</span>
+              <span class="zip-format-pills"><i>PDF</i><i>PNG</i><i>XLSX</i></span>
             </button>
           </div>
         </div>
@@ -784,6 +798,7 @@
     <script src="assets/js/infrastructure/export/export-core-xlsx.js"></script>
     <script src="assets/js/infrastructure/export/pdf-exporter.js"></script>
     <script src="assets/js/infrastructure/export/png-exporter.js"></script>
+    <script src="assets/js/infrastructure/export/department-zip-exporter.js"></script>
     <script src="assets/js/presentation/controller.js"></script>
     <script src="assets/js/app.js"></script>
   </body>
